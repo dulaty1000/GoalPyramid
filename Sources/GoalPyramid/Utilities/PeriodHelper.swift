@@ -39,6 +39,39 @@ enum PeriodHelper {
         return calendar.date(from: comps) ?? Date()
     }
 
+    static func year(of date: Date) -> Int {
+        calendar.component(.year, from: date)
+    }
+
+    /// Берілген жыл мен ай нөмірінің 1-күнін қайтарады.
+    static func monthStart(year: Int, month: Int) -> Date {
+        var comps = DateComponents()
+        comps.year = year
+        comps.month = month
+        comps.day = 1
+        return calendar.date(from: comps) ?? Date()
+    }
+
+    /// Берілген айға тиесілі апталар (айдың 1-күні кіретін аптадан бастап,
+    /// соңғы күні кіретін аптаға дейін, дүйсенбіден басталады).
+    static func weeksInMonth(_ monthStart: Date) -> [Date] {
+        let cal = calendar
+        guard let monthEnd = cal.date(byAdding: DateComponents(month: 1, day: -1), to: monthStart) else { return [] }
+        var result: [Date] = []
+        var current = periodStart(for: .weekly, containing: monthStart)
+        while current <= monthEnd {
+            result.append(current)
+            guard let next = cal.date(byAdding: .day, value: 7, to: current) else { break }
+            current = next
+        }
+        return result
+    }
+
+    /// Берілген (дүйсенбіден басталатын) аптадағы 7 күн.
+    static func daysInWeek(_ weekStart: Date) -> [Date] {
+        (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
+    }
+
     static func displayRange(for level: GoalLevel, periodStart: Date) -> String {
         let cal = calendar
         let df = DateFormatter()

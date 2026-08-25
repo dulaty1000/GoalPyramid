@@ -23,11 +23,14 @@ struct GoalListView: View {
     }
 
     private var navTitle: String {
-        if level == .fiveYear {
-            let year = PeriodHelper.calendar.component(.year, from: periodStart)
-            return "\(year) жылғы мақсаттар"
+        switch level {
+        case .fiveYear:
+            return "\(PeriodHelper.year(of: periodStart)) жылғы мақсаттар"
+        case .monthly, .weekly, .daily:
+            return "\(PeriodHelper.displayRange(for: level, periodStart: periodStart)) — мақсаттар"
+        case .yearly:
+            return "\(level.title) мақсаттар"
         }
-        return "\(level.title) мақсаттар"
     }
 
     var body: some View {
@@ -63,6 +66,59 @@ struct GoalListView: View {
                     showingAdd = true
                 } label: {
                     Label("Жаңа мақсат қосу", systemImage: "plus.circle.fill")
+                }
+            }
+
+            Section {
+                if level == .fiveYear {
+                    NavigationLink {
+                        MonthsOverviewView(year: PeriodHelper.year(of: periodStart))
+                    } label: {
+                        Label("Айларға өту", systemImage: "arrow.right.circle.fill")
+                    }
+                }
+
+                if level == .monthly {
+                    NavigationLink {
+                        WeeksOverviewView(monthStart: periodStart)
+                    } label: {
+                        Label("Апталарға өту", systemImage: "arrow.right.circle.fill")
+                    }
+                    NavigationLink {
+                        GoalListView(
+                            level: .fiveYear,
+                            periodStart: PeriodHelper.yearStart(PeriodHelper.year(of: periodStart))
+                        )
+                    } label: {
+                        Label("Жылға қайту", systemImage: "arrow.up.circle")
+                    }
+                }
+
+                if level == .weekly {
+                    NavigationLink {
+                        DaysOverviewView(weekStart: periodStart)
+                    } label: {
+                        Label("Күндерге өту", systemImage: "arrow.right.circle.fill")
+                    }
+                    NavigationLink {
+                        GoalListView(
+                            level: .monthly,
+                            periodStart: PeriodHelper.periodStart(for: .monthly, containing: periodStart)
+                        )
+                    } label: {
+                        Label("Айға қайту", systemImage: "arrow.up.circle")
+                    }
+                }
+
+                if level == .daily {
+                    NavigationLink {
+                        GoalListView(
+                            level: .weekly,
+                            periodStart: PeriodHelper.periodStart(for: .weekly, containing: periodStart)
+                        )
+                    } label: {
+                        Label("Аптаға қайту", systemImage: "arrow.up.circle")
+                    }
                 }
             }
         }

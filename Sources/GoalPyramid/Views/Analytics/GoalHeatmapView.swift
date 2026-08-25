@@ -11,11 +11,15 @@ struct GoalHeatmapView: View {
     private let cellSize: CGFloat = 11
     private let cellSpacing: CGFloat = 3
 
+    /// Бүгінгі күн торлдың ортасында тұратындай: сол жақта өткен ~6 ай,
+    /// оң жақта алдағы ~6 ай (әлі деректер жоқ, толтырылмаған) — уақыт
+    /// өткен сайын терезе бүгінге қарай жылжып, ортада ұстайды.
     private var days: [Date] {
         let cal = PeriodHelper.calendar
         let today = cal.startOfDay(for: Date())
-        return (0..<365).reversed().compactMap { offset in
-            cal.date(byAdding: .day, value: -offset, to: today)
+        let halfSpan = 182
+        return (-halfSpan...halfSpan).compactMap { offset in
+            cal.date(byAdding: .day, value: offset, to: today)
         }
     }
 

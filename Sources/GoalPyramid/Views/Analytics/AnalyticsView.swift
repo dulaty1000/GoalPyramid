@@ -3,7 +3,7 @@ import SwiftData
 import Charts
 import Foundation
 
-/// Прогресс аналитикасы: деңгей бойынша орындалу, түс бойынша бағалау, соңғы 30 күндік тренд.
+/// Прогресс аналитикасы: деңгей бойынша орындалу, деңгей бойынша барлық сан, соңғы 30 күндік тренд.
 struct AnalyticsView: View {
     @Query(filter: #Predicate<GoalItem> { !$0.isDeleted }) private var activeGoals: [GoalItem]
 
@@ -22,10 +22,8 @@ struct AnalyticsView: View {
         }
     }
 
-    private var colorDistribution: [(EvaluationColor, Int)] {
-        EvaluationColor.allCases.map { color in
-            (color, activeGoals.filter { $0.isCompleted && $0.evaluation == color }.count)
-        }
+    private func totalCount(for level: GoalLevel) -> Int {
+        activeGoals.filter { $0.level == level }.count
     }
 
     private var last30DaysTrend: [(Date, Int)] {
@@ -73,23 +71,18 @@ struct AnalyticsView: View {
                     .frame(height: 220)
                 }
 
-                card(title: "Түс бойынша бағалау") {
-                    Chart(colorDistribution, id: \.0) { pair in
-                        SectorMark(angle: .value("Саны", pair.1), innerRadius: .ratio(0.6))
-                            .foregroundStyle(pair.0.color)
+                card(title: "Деңгей бойынша барлық сан") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        countRow(label: "Жыл", count: totalCount(for: .yearly))
+                        countRow(label: "Ай", count: totalCount(for: .monthly))
+                        countRow(label: "Апта", count: totalCount(for: .weekly))
+                        countRow(label: "Күн", count: totalCount(for: .daily))
                     }
-                    .frame(height: 220)
 
-                    HStack(spacing: 16) {
-                        ForEach(colorDistribution, id: \.0) { pair in
-                            HStack(spacing: 4) {
-                                Circle().fill(pair.0.color).frame(width: 8, height: 8)
-                                Text("\(pair.0.label): \(pair.1)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
+                    Text("Кеңес: әр бөлім келесі бөлікке қарағанда 3 есе көп болса жақсы")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 6)
                 }
 
                 card(title: "Жетістіктер картасы (соңғы 1 жыл)") {
@@ -123,6 +116,17 @@ struct AnalyticsView: View {
             statCard(title: "Барлық мақсаттар", value: "\(activeGoals.count)")
             statCard(title: "Орындалды", value: "\(activeGoals.filter(\.isCompleted).count)")
             statCard(title: "Жалпы пайыз", value: "\(Int(overallCompletionRate * 100))%")
+        }
+    }
+
+    private func countRow(label: String, count: Int) -> some View {
+        HStack(spacing: 10) {
+            Text(label)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .frame(width: 56, alignment: .leading)
+            Text("\(count) мақсат")
+                .font(.title3.bold())
         }
     }
 

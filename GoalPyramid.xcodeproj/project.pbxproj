@@ -19,6 +19,7 @@
 		B1089C59753724B385360F00 /* HierarchyAccordionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */; };
 		CC32AD3C3B75EC5F902D7DDB /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B349AC3CA1851D59337571 /* AnalyticsView.swift */; };
 		DA0D47BB2DA517CDC304F6CF /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1985A1C4A55F6FE5B6F2B0F5 /* ColorTheme.swift */; };
+		ECBA4DEF390D799AA9C36922 /* FiveYearOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F769AE0AED4C4434FFE801 /* FiveYearOverviewView.swift */; };
 		F065E30860D39926B7AB4935 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4100712B01633E3302CA90B1 /* DashboardView.swift */; };
 		FE11903578840EE97E39BBEB /* PeriodHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F04BD77C1124E338825EF9 /* PeriodHelper.swift */; };
 /* End PBXBuildFile section */
@@ -36,6 +37,7 @@
 		4F887B3CA4F5E44D9A8A4CB7 /* GoalRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRowView.swift; sourceTree = "<group>"; };
 		6B54F2592DC6B9C750903460 /* TrashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashView.swift; sourceTree = "<group>"; };
 		6FB8B5E4041A743AEF06024B /* GoalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalListView.swift; sourceTree = "<group>"; };
+		79F769AE0AED4C4434FFE801 /* FiveYearOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiveYearOverviewView.swift; sourceTree = "<group>"; };
 		B4B349AC3CA1851D59337571 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		D6F04BD77C1124E338825EF9 /* PeriodHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodHelper.swift; sourceTree = "<group>"; };
 		D9FF41E2DFA588417A50140B /* AddEditGoalSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditGoalSheet.swift; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 			children = (
 				D9FF41E2DFA588417A50140B /* AddEditGoalSheet.swift */,
 				4100712B01633E3302CA90B1 /* DashboardView.swift */,
+				79F769AE0AED4C4434FFE801 /* FiveYearOverviewView.swift */,
 				6FB8B5E4041A743AEF06024B /* GoalListView.swift */,
 				4F887B3CA4F5E44D9A8A4CB7 /* GoalRowView.swift */,
 				1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */,
@@ -215,6 +218,7 @@
 				DA0D47BB2DA517CDC304F6CF /* ColorTheme.swift in Sources */,
 				F065E30860D39926B7AB4935 /* DashboardView.swift in Sources */,
 				68BC85350C44CEE0265166AC /* Enums.swift in Sources */,
+				ECBA4DEF390D799AA9C36922 /* FiveYearOverviewView.swift in Sources */,
 				47A54482A99E8D19ADE2344C /* GoalItem.swift in Sources */,
 				A4373AFE7DB374B337A78D71 /* GoalListView.swift in Sources */,
 				6A85552848E3CD23C5396E4F /* GoalPyramidApp.swift in Sources */,

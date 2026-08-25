@@ -22,6 +22,14 @@ struct GoalListView: View {
         return Double(goals.filter(\.isCompleted).count) / Double(goals.count)
     }
 
+    private var navTitle: String {
+        if level == .fiveYear {
+            let year = PeriodHelper.calendar.component(.year, from: periodStart)
+            return "\(year) жылғы мақсаттар"
+        }
+        return "\(level.title) мақсаттар"
+    }
+
     var body: some View {
         List {
             Section {
@@ -59,7 +67,7 @@ struct GoalListView: View {
             }
         }
         .listStyle(.inset)
-        .navigationTitle("\(level.title) мақсаттар")
+        .navigationTitle(navTitle)
         .sheet(isPresented: $showingAdd) {
             AddEditGoalSheet(level: level, periodStart: periodStart, parentID: nil, existingGoal: nil)
         }

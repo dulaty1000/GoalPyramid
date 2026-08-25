@@ -54,7 +54,7 @@ struct DashboardView: View {
             case .year:
                 GoalListView(level: .yearly, periodStart: PeriodHelper.periodStart(for: .yearly))
             case .fiveYear:
-                GoalListView(level: .fiveYear, periodStart: PeriodHelper.periodStart(for: .fiveYear))
+                FiveYearOverviewView()
             case .hierarchy:
                 HierarchyAccordionView()
             case .analytics:

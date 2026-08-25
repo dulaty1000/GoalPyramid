@@ -25,14 +25,18 @@ enum PeriodHelper {
             let comps = cal.dateComponents([.year], from: date)
             return cal.date(from: comps) ?? date
         case .fiveYear:
-            let year = cal.component(.year, from: date)
-            let eraStartYear = year - (year % 5)
-            var comps = DateComponents()
-            comps.year = eraStartYear
-            comps.month = 1
-            comps.day = 1
+            let comps = cal.dateComponents([.year], from: date)
             return cal.date(from: comps) ?? date
         }
+    }
+
+    /// Берілген жылдың 1 қаңтарын қайтарады — "5 Жыл" бөліміндегі жеке жыл беттері үшін.
+    static func yearStart(_ year: Int) -> Date {
+        var comps = DateComponents()
+        comps.year = year
+        comps.month = 1
+        comps.day = 1
+        return calendar.date(from: comps) ?? Date()
     }
 
     static func displayRange(for level: GoalLevel, periodStart: Date) -> String {
@@ -55,8 +59,8 @@ enum PeriodHelper {
             df.dateFormat = "yyyy"
             return df.string(from: periodStart)
         case .fiveYear:
-            let year = cal.component(.year, from: periodStart)
-            return "\(year) – \(year + 4)"
+            df.dateFormat = "yyyy"
+            return df.string(from: periodStart)
         }
     }
 }

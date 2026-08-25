@@ -1,0 +1,408 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1380D41B0081569F0AE7E527 /* MenuBarTodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B077AB6F67115CE06412F2D /* MenuBarTodayView.swift */; };
+		3BB7B30325C789C8DC9F2D42 /* AddEditGoalSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF41E2DFA588417A50140B /* AddEditGoalSheet.swift */; };
+		47A54482A99E8D19ADE2344C /* GoalItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD5FC5EF655A08A6277E5C6 /* GoalItem.swift */; };
+		55DE5E1459D95E1AF7B56854 /* GoalRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F887B3CA4F5E44D9A8A4CB7 /* GoalRowView.swift */; };
+		68BC85350C44CEE0265166AC /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B589A3AFA325B4B34F303F /* Enums.swift */; };
+		6A85552848E3CD23C5396E4F /* GoalPyramidApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EAB789C03583A54CDE5FAD /* GoalPyramidApp.swift */; };
+		7E79686BF427E2F936167726 /* GoalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217115BB5A89041EEB29382F /* GoalStore.swift */; };
+		A4373AFE7DB374B337A78D71 /* GoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB8B5E4041A743AEF06024B /* GoalListView.swift */; };
+		B1089C59753724B385360F00 /* HierarchyAccordionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */; };
+		CC32AD3C3B75EC5F902D7DDB /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B349AC3CA1851D59337571 /* AnalyticsView.swift */; };
+		DA0D47BB2DA517CDC304F6CF /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1985A1C4A55F6FE5B6F2B0F5 /* ColorTheme.swift */; };
+		F065E30860D39926B7AB4935 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4100712B01633E3302CA90B1 /* DashboardView.swift */; };
+		FE11903578840EE97E39BBEB /* PeriodHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F04BD77C1124E338825EF9 /* PeriodHelper.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		16EAB789C03583A54CDE5FAD /* GoalPyramidApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalPyramidApp.swift; sourceTree = "<group>"; };
+		1985A1C4A55F6FE5B6F2B0F5 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
+		1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyAccordionView.swift; sourceTree = "<group>"; };
+		217115BB5A89041EEB29382F /* GoalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStore.swift; sourceTree = "<group>"; };
+		4100712B01633E3302CA90B1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		42B589A3AFA325B4B34F303F /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		4B077AB6F67115CE06412F2D /* MenuBarTodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarTodayView.swift; sourceTree = "<group>"; };
+		4BD5FC5EF655A08A6277E5C6 /* GoalItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalItem.swift; sourceTree = "<group>"; };
+		4EBF5B00AE8D723D1D644AB7 /* GoalPyramid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GoalPyramid.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F887B3CA4F5E44D9A8A4CB7 /* GoalRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRowView.swift; sourceTree = "<group>"; };
+		6FB8B5E4041A743AEF06024B /* GoalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalListView.swift; sourceTree = "<group>"; };
+		B4B349AC3CA1851D59337571 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		D6F04BD77C1124E338825EF9 /* PeriodHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodHelper.swift; sourceTree = "<group>"; };
+		D9FF41E2DFA588417A50140B /* AddEditGoalSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditGoalSheet.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0A571CDE7940BD6FE6414FBE /* GoalPyramid */ = {
+			isa = PBXGroup;
+			children = (
+				64E11CA475457895CA6CCB9C /* App */,
+				A249EB17079810C8CF85D4DC /* Models */,
+				8EE5DE07D412DEC37FFEB6D2 /* Utilities */,
+				A52044C6B42CB899B8E6910D /* ViewModels */,
+				A48F851ACC24E5849055B832 /* Views */,
+			);
+			name = GoalPyramid;
+			path = Sources/GoalPyramid;
+			sourceTree = "<group>";
+		};
+		0E6DEB3A920386CE25645E8D /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				B4B349AC3CA1851D59337571 /* AnalyticsView.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		4669620CE4B61924A9CD6B45 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				D9FF41E2DFA588417A50140B /* AddEditGoalSheet.swift */,
+				4100712B01633E3302CA90B1 /* DashboardView.swift */,
+				6FB8B5E4041A743AEF06024B /* GoalListView.swift */,
+				4F887B3CA4F5E44D9A8A4CB7 /* GoalRowView.swift */,
+				1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		4ABF195103C58442806A3CE5 = {
+			isa = PBXGroup;
+			children = (
+				0A571CDE7940BD6FE6414FBE /* GoalPyramid */,
+				6E0410946CD20C934706611D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		64E11CA475457895CA6CCB9C /* App */ = {
+			isa = PBXGroup;
+			children = (
+				16EAB789C03583A54CDE5FAD /* GoalPyramidApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		6E0410946CD20C934706611D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4EBF5B00AE8D723D1D644AB7 /* GoalPyramid.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8EE5DE07D412DEC37FFEB6D2 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				1985A1C4A55F6FE5B6F2B0F5 /* ColorTheme.swift */,
+				D6F04BD77C1124E338825EF9 /* PeriodHelper.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A249EB17079810C8CF85D4DC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				42B589A3AFA325B4B34F303F /* Enums.swift */,
+				4BD5FC5EF655A08A6277E5C6 /* GoalItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A48F851ACC24E5849055B832 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0E6DEB3A920386CE25645E8D /* Analytics */,
+				4669620CE4B61924A9CD6B45 /* Dashboard */,
+				C2D5033FD1DD7F259D621F50 /* MenuBar */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A52044C6B42CB899B8E6910D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				217115BB5A89041EEB29382F /* GoalStore.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C2D5033FD1DD7F259D621F50 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				4B077AB6F67115CE06412F2D /* MenuBarTodayView.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6A8593DC89289D8F8DF7E16D /* GoalPyramid */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6DEA745E5A7A3982F53DC3A7 /* Build configuration list for PBXNativeTarget "GoalPyramid" */;
+			buildPhases = (
+				75A3700C7D055473B411179C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GoalPyramid;
+			packageProductDependencies = (
+			);
+			productName = GoalPyramid;
+			productReference = 4EBF5B00AE8D723D1D644AB7 /* GoalPyramid.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BB093A3E9A0C82DABA9A36CF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					6A8593DC89289D8F8DF7E16D = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 0D01EBCCCB64A34CA00B956B /* Build configuration list for PBXProject "GoalPyramid" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 4ABF195103C58442806A3CE5;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 6E0410946CD20C934706611D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6A8593DC89289D8F8DF7E16D /* GoalPyramid */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		75A3700C7D055473B411179C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BB7B30325C789C8DC9F2D42 /* AddEditGoalSheet.swift in Sources */,
+				CC32AD3C3B75EC5F902D7DDB /* AnalyticsView.swift in Sources */,
+				DA0D47BB2DA517CDC304F6CF /* ColorTheme.swift in Sources */,
+				F065E30860D39926B7AB4935 /* DashboardView.swift in Sources */,
+				68BC85350C44CEE0265166AC /* Enums.swift in Sources */,
+				47A54482A99E8D19ADE2344C /* GoalItem.swift in Sources */,
+				A4373AFE7DB374B337A78D71 /* GoalListView.swift in Sources */,
+				6A85552848E3CD23C5396E4F /* GoalPyramidApp.swift in Sources */,
+				55DE5E1459D95E1AF7B56854 /* GoalRowView.swift in Sources */,
+				7E79686BF427E2F936167726 /* GoalStore.swift in Sources */,
+				B1089C59753724B385360F00 /* HierarchyAccordionView.swift in Sources */,
+				1380D41B0081569F0AE7E527 /* MenuBarTodayView.swift in Sources */,
+				FE11903578840EE97E39BBEB /* PeriodHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		54EB917F85279AD1FE595974 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		7431DCFC0E24C000BB9CBC5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = kz.dulatabilkhan.GoalPyramid;
+				PRODUCT_NAME = GoalPyramid;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		ACA980D6D28D9FC2ADFFA80F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		FD3AEE1AD936A117E7813569 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = kz.dulatabilkhan.GoalPyramid;
+				PRODUCT_NAME = GoalPyramid;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0D01EBCCCB64A34CA00B956B /* Build configuration list for PBXProject "GoalPyramid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ACA980D6D28D9FC2ADFFA80F /* Debug */,
+				54EB917F85279AD1FE595974 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6DEA745E5A7A3982F53DC3A7 /* Build configuration list for PBXNativeTarget "GoalPyramid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7431DCFC0E24C000BB9CBC5F /* Debug */,
+				FD3AEE1AD936A117E7813569 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BB093A3E9A0C82DABA9A36CF /* Project object */;
+}

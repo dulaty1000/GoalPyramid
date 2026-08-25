@@ -6,7 +6,7 @@ struct GoalPyramidApp: App {
     let container: ModelContainer
 
     init() {
-        let schema = Schema([GoalItem.self])
+        let schema = Schema([GoalItem.self, NoteItem.self])
         // isStoredInMemoryOnly: false → деректер тек осы Mac-та, жергілікті дискіде сақталады.
         // cloudKitDatabase: .none → ешбір желілік синхронизация жоқ, толық offline.
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .none)

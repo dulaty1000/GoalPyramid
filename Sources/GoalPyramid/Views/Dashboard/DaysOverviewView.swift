@@ -26,5 +26,22 @@ struct DaysOverviewView: View {
         }
         .listStyle(.inset)
         .navigationTitle("\(PeriodHelper.displayRange(for: .weekly, periodStart: weekStart)) күндері")
+        .toolbar {
+            ToolbarItemGroup(placement: .navigation) {
+                NavigationLink {
+                    GoalListView(level: .weekly, periodStart: weekStart)
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .help("Аптаға қайту")
+
+                NavigationLink {
+                    GoalListView(level: .daily, periodStart: days.first ?? weekStart)
+                } label: {
+                    Image(systemName: "chevron.right")
+                }
+                .help("Күнге өту")
+            }
+        }
     }
 }

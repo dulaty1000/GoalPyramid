@@ -26,5 +26,22 @@ struct WeeksOverviewView: View {
         }
         .listStyle(.inset)
         .navigationTitle("\(PeriodHelper.displayRange(for: .monthly, periodStart: monthStart)) апталары")
+        .toolbar {
+            ToolbarItemGroup(placement: .navigation) {
+                NavigationLink {
+                    GoalListView(level: .monthly, periodStart: monthStart)
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .help("Айға қайту")
+
+                NavigationLink {
+                    GoalListView(level: .weekly, periodStart: weeks.first ?? monthStart)
+                } label: {
+                    Image(systemName: "chevron.right")
+                }
+                .help("Аптаға өту")
+            }
+        }
     }
 }

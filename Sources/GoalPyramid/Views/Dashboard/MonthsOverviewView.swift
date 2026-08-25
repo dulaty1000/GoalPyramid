@@ -27,6 +27,23 @@ struct MonthsOverviewView: View {
             }
         }
         .listStyle(.inset)
-        .navigationTitle("\(year) жылдың айлары")
+        .navigationTitle("\(String(year)) жылдың айлары")
+        .toolbar {
+            ToolbarItemGroup(placement: .navigation) {
+                NavigationLink {
+                    GoalListView(level: .fiveYear, periodStart: PeriodHelper.yearStart(year))
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .help("Жылға қайту")
+
+                NavigationLink {
+                    GoalListView(level: .monthly, periodStart: PeriodHelper.monthStart(year: year, month: 1))
+                } label: {
+                    Image(systemName: "chevron.right")
+                }
+                .help("Айға өту")
+            }
+        }
     }
 }

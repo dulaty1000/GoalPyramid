@@ -44,6 +44,10 @@ struct AnalyticsView: View {
         return Double(activeGoals.filter(\.isCompleted).count) / Double(total)
     }
 
+    private var dailyGoals: [GoalItem] {
+        activeGoals.filter { $0.level == .daily }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
@@ -86,6 +90,10 @@ struct AnalyticsView: View {
                             }
                         }
                     }
+                }
+
+                card(title: "Жетістіктер картасы (соңғы 1 жыл)") {
+                    GoalHeatmapView(dailyGoals: dailyGoals)
                 }
 
                 card(title: "Соңғы 30 күн (орындалған күндік тапсырмалар)") {

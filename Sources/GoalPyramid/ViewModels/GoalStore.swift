@@ -26,4 +26,14 @@ enum GoalStore {
             goal.completedAt = nil
         }
     }
+
+    static func moveToTrash(_ goal: GoalItem) {
+        goal.isDeleted = true
+        goal.deletedAt = Date()
+    }
+
+    static func restore(_ goal: GoalItem) {
+        goal.isDeleted = false
+        goal.deletedAt = nil
+    }
 }

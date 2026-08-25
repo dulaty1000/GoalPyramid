@@ -23,7 +23,7 @@ struct AddEditGoalSheet: View {
 
     private var potentialParents: [GoalItem] {
         guard let parentLevel = level.parentLevel else { return [] }
-        return allGoals.filter { $0.level == parentLevel }
+        return allGoals.filter { $0.level == parentLevel && !$0.isDeleted }
     }
 
     var body: some View {
@@ -56,9 +56,9 @@ struct AddEditGoalSheet: View {
 
             HStack {
                 if isEditing {
-                    Button("Өшіру", role: .destructive) {
+                    Button("Қоқысқа тастау", role: .destructive) {
                         if let goal = existingGoal {
-                            context.delete(goal)
+                            GoalStore.moveToTrash(goal)
                         }
                         dismiss()
                     }

@@ -7,7 +7,7 @@ struct HierarchyAccordionView: View {
 
     private func goals(_ level: GoalLevel, _ periodStart: Date) -> [GoalItem] {
         allGoals
-            .filter { $0.level == level && $0.periodStart == periodStart }
+            .filter { $0.level == level && $0.periodStart == periodStart && !$0.isDeleted }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 

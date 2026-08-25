@@ -1,10 +1,11 @@
 import SwiftUI
 import SwiftData
 import Charts
+import Foundation
 
 /// Прогресс аналитикасы: деңгей бойынша орындалу, түс бойынша бағалау, соңғы 30 күндік тренд.
 struct AnalyticsView: View {
-    @Query private var allGoals: [GoalItem]
+    @Query(filter: #Predicate<GoalItem> { !$0.isDeleted }) private var activeGoals: [GoalItem]
 
     private struct LevelStat: Identifiable {
         let id = UUID()
@@ -16,14 +17,14 @@ struct AnalyticsView: View {
 
     private var levelStats: [LevelStat] {
         GoalLevel.allCases.map { level in
-            let items = allGoals.filter { $0.level == level }
+            let items = activeGoals.filter { $0.level == level }
             return LevelStat(level: level, total: items.count, completed: items.filter(\.isCompleted).count)
         }
     }
 
     private var colorDistribution: [(EvaluationColor, Int)] {
         EvaluationColor.allCases.map { color in
-            (color, allGoals.filter { $0.isCompleted && $0.evaluation == color }.count)
+            (color, activeGoals.filter { $0.isCompleted && $0.evaluation == color }.count)
         }
     }
 
@@ -32,15 +33,15 @@ struct AnalyticsView: View {
         let today = cal.startOfDay(for: Date())
         return (0..<30).reversed().compactMap { offset -> (Date, Int)? in
             guard let day = cal.date(byAdding: .day, value: -offset, to: today) else { return nil }
-            let items = allGoals.filter { $0.level == .daily && $0.periodStart == day }
+            let items = activeGoals.filter { $0.level == .daily && $0.periodStart == day }
             return (day, items.filter(\.isCompleted).count)
         }
     }
 
     private var overallCompletionRate: Double {
-        let total = allGoals.count
+        let total = activeGoals.count
         guard total > 0 else { return 0 }
-        return Double(allGoals.filter(\.isCompleted).count) / Double(total)
+        return Double(activeGoals.filter(\.isCompleted).count) / Double(total)
     }
 
     var body: some View {
@@ -111,8 +112,8 @@ struct AnalyticsView: View {
 
     private var summaryCards: some View {
         HStack(spacing: 16) {
-            statCard(title: "Барлық мақсаттар", value: "\(allGoals.count)")
-            statCard(title: "Орындалды", value: "\(allGoals.filter(\.isCompleted).count)")
+            statCard(title: "Барлық мақсаттар", value: "\(activeGoals.count)")
+            statCard(title: "Орындалды", value: "\(activeGoals.filter(\.isCompleted).count)")
             statCard(title: "Жалпы пайыз", value: "\(Int(overallCompletionRate * 100))%")
         }
     }

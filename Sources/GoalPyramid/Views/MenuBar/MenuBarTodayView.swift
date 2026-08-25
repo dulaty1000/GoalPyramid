@@ -14,7 +14,7 @@ struct MenuBarTodayView: View {
 
     private var todayGoals: [GoalItem] {
         allGoals
-            .filter { $0.level == .daily && $0.periodStart == todayStart }
+            .filter { $0.level == .daily && $0.periodStart == todayStart && !$0.isDeleted }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 

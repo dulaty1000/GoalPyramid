@@ -1,0 +1,77 @@
+import SwiftUI
+import SwiftData
+import Foundation
+
+/// Қоқысқа тасталған мақсаттар: қалпына келтіру немесе түбегейлі жою.
+struct TrashView: View {
+    @Environment(\.modelContext) private var context
+    @Query(
+        filter: #Predicate<GoalItem> { $0.isDeleted },
+        sort: \GoalItem.deletedAt,
+        order: .reverse
+    ) private var trashedGoals: [GoalItem]
+
+    @State private var showingConfirmClear = false
+
+    var body: some View {
+        List {
+            if !trashedGoals.isEmpty {
+                Section {
+                    Button(role: .destructive) {
+                        showingConfirmClear = true
+                    } label: {
+                        Label("Барлығын өшіру", systemImage: "trash.slash.fill")
+                    }
+                }
+            }
+
+            Section {
+                if trashedGoals.isEmpty {
+                    Text("Қоқыс бос")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(trashedGoals) { goal in
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(goal.title)
+                                    .strikethrough()
+                                Text("\(goal.level.title) · \(PeriodHelper.displayRange(for: goal.level, periodStart: goal.periodStart))")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Button {
+                                GoalStore.restore(goal)
+                            } label: {
+                                Label("Қалпына келтіру", systemImage: "arrow.uturn.backward")
+                            }
+                            .buttonStyle(.bordered)
+
+                            Button(role: .destructive) {
+                                context.delete(goal)
+                            } label: {
+                                Label("Жою", systemImage: "xmark.circle")
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
+        }
+        .listStyle(.inset)
+        .navigationTitle("Қоқыс")
+        .alert("Барлық қоқысты өшіру керек пе?", isPresented: $showingConfirmClear) {
+            Button("Болдырмау", role: .cancel) {}
+            Button("Өшіру", role: .destructive) {
+                for goal in trashedGoals {
+                    context.delete(goal)
+                }
+            }
+        } message: {
+            Text("Бұл әрекетті болдырмау мүмкін емес.")
+        }
+    }
+}

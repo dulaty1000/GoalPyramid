@@ -6,7 +6,6 @@ struct GoalListView: View {
     let level: GoalLevel
     let periodStart: Date
 
-    @Environment(\.modelContext) private var context
     @Query private var allGoals: [GoalItem]
 
     @State private var showingAdd = false
@@ -14,7 +13,7 @@ struct GoalListView: View {
 
     private var goals: [GoalItem] {
         allGoals
-            .filter { $0.level == level && $0.periodStart == periodStart }
+            .filter { $0.level == level && $0.periodStart == periodStart && !$0.isDeleted }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
@@ -45,9 +44,9 @@ struct GoalListView: View {
                         .onTapGesture { editingGoal = goal }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                context.delete(goal)
+                                GoalStore.moveToTrash(goal)
                             } label: {
-                                Label("Өшіру", systemImage: "trash")
+                                Label("Қоқысқа тастау", systemImage: "trash")
                             }
                         }
                 }

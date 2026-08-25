@@ -16,6 +16,8 @@ final class GoalItem {
     var createdAt: Date = Date()
     var completedAt: Date?
     var parentID: UUID?
+    var isDeleted: Bool = false
+    var deletedAt: Date?
 
     var level: GoalLevel {
         get { GoalLevel(rawValue: levelRaw) ?? .daily }
@@ -46,5 +48,7 @@ final class GoalItem {
         self.createdAt = Date()
         self.completedAt = nil
         self.parentID = parentID
+        self.isDeleted = false
+        self.deletedAt = nil
     }
 }

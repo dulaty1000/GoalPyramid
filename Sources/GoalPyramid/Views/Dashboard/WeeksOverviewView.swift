@@ -3,10 +3,19 @@ import SwiftUI
 /// Берілген айдың апталар тізімі — ағаш навигациядағы "Апта" деңгейінің
 /// таңдау беті (Жыл → Ай → **Апта** → Күн).
 struct WeeksOverviewView: View {
-    let monthStart: Date
+    @State private var monthStart: Date
+
+    init(monthStart: Date) {
+        _monthStart = State(initialValue: monthStart)
+    }
 
     private var weeks: [Date] {
         PeriodHelper.weeksInMonth(monthStart)
+    }
+
+    private func shiftMonth(_ delta: Int) {
+        guard let newDate = PeriodHelper.calendar.date(byAdding: .month, value: delta, to: monthStart) else { return }
+        monthStart = newDate
     }
 
     var body: some View {
@@ -26,5 +35,22 @@ struct WeeksOverviewView: View {
         }
         .listStyle(.inset)
         .navigationTitle("\(PeriodHelper.displayRange(for: .monthly, periodStart: monthStart)) апталары")
+        .toolbar {
+            ToolbarItemGroup(placement: .navigation) {
+                Button {
+                    shiftMonth(-1)
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .help("Алдыңғы ай")
+
+                Button {
+                    shiftMonth(1)
+                } label: {
+                    Image(systemName: "chevron.right")
+                }
+                .help("Келесі ай")
+            }
+        }
     }
 }

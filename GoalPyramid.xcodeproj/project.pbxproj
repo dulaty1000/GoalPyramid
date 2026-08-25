@@ -19,7 +19,6 @@
 		7E79686BF427E2F936167726 /* GoalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217115BB5A89041EEB29382F /* GoalStore.swift */; };
 		8AE6C6E4AFB0E0DF21C1D36F /* DaysOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CD782B49B51575524CDB35 /* DaysOverviewView.swift */; };
 		A4373AFE7DB374B337A78D71 /* GoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB8B5E4041A743AEF06024B /* GoalListView.swift */; };
-		B1089C59753724B385360F00 /* HierarchyAccordionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */; };
 		CC32AD3C3B75EC5F902D7DDB /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B349AC3CA1851D59337571 /* AnalyticsView.swift */; };
 		DA0D47BB2DA517CDC304F6CF /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1985A1C4A55F6FE5B6F2B0F5 /* ColorTheme.swift */; };
 		ECBA4DEF390D799AA9C36922 /* FiveYearOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F769AE0AED4C4434FFE801 /* FiveYearOverviewView.swift */; };
@@ -31,7 +30,6 @@
 /* Begin PBXFileReference section */
 		16EAB789C03583A54CDE5FAD /* GoalPyramidApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalPyramidApp.swift; sourceTree = "<group>"; };
 		1985A1C4A55F6FE5B6F2B0F5 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
-		1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HierarchyAccordionView.swift; sourceTree = "<group>"; };
 		217115BB5A89041EEB29382F /* GoalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStore.swift; sourceTree = "<group>"; };
 		4100712B01633E3302CA90B1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		42B589A3AFA325B4B34F303F /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
@@ -83,7 +81,6 @@
 				79F769AE0AED4C4434FFE801 /* FiveYearOverviewView.swift */,
 				6FB8B5E4041A743AEF06024B /* GoalListView.swift */,
 				4F887B3CA4F5E44D9A8A4CB7 /* GoalRowView.swift */,
-				1AD57AD78BF03ACC2B0BDA0A /* HierarchyAccordionView.swift */,
 				EB8E521DEDB8E9D98B7BF37A /* MonthsOverviewView.swift */,
 				DD0BAED053FE3FDD9F01EAE0 /* WeeksOverviewView.swift */,
 			);
@@ -238,7 +235,6 @@
 				6A85552848E3CD23C5396E4F /* GoalPyramidApp.swift in Sources */,
 				55DE5E1459D95E1AF7B56854 /* GoalRowView.swift in Sources */,
 				7E79686BF427E2F936167726 /* GoalStore.swift in Sources */,
-				B1089C59753724B385360F00 /* HierarchyAccordionView.swift in Sources */,
 				1380D41B0081569F0AE7E527 /* MenuBarTodayView.swift in Sources */,
 				F37388955387F66D8A4D02A0 /* MonthsOverviewView.swift in Sources */,
 				FE11903578840EE97E39BBEB /* PeriodHelper.swift in Sources */,

@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum DashboardSection: String, CaseIterable, Identifiable {
-    case today, week, month, year, fiveYear, hierarchy, analytics, trash
+    case today, week, month, year, fiveYear, analytics, trash
     var id: String { rawValue }
 
     var title: String {
@@ -11,7 +11,6 @@ enum DashboardSection: String, CaseIterable, Identifiable {
         case .month: return "Ай"
         case .year: return "Жыл"
         case .fiveYear: return "5 Жыл"
-        case .hierarchy: return "Иерархия"
         case .analytics: return "Аналитика"
         case .trash: return "Қоқыс"
         }
@@ -24,7 +23,6 @@ enum DashboardSection: String, CaseIterable, Identifiable {
         case .month: return "calendar"
         case .year: return "flag.fill"
         case .fiveYear: return "mountain.2.fill"
-        case .hierarchy: return "list.bullet.indent"
         case .analytics: return "chart.pie.fill"
         case .trash: return "trash"
         }
@@ -55,8 +53,6 @@ struct DashboardView: View {
                 GoalListView(level: .yearly, periodStart: PeriodHelper.periodStart(for: .yearly))
             case .fiveYear:
                 FiveYearOverviewView()
-            case .hierarchy:
-                HierarchyAccordionView()
             case .analytics:
                 AnalyticsView()
             case .trash:

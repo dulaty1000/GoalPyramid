@@ -1,9 +1,13 @@
 import SwiftUI
 
 /// Берілген айдың апталар тізімі — ағаш навигациядағы "Апта" деңгейінің
-/// таңдау беті (Жыл → Ай → **Апта** → Күн).
+/// таңдау беті (Жыл → Ай → **Апта** → Күн). Push жасамайды, тек
+/// `onSelectWeek`/`onNavigateUp`/`onNavigateDown` closure-дары арқылы.
 struct WeeksOverviewView: View {
     let monthStart: Date
+    var onSelectWeek: (Date) -> Void
+    var onNavigateUp: (() -> Void)?
+    var onNavigateDown: (() -> Void)?
 
     private var weeks: [Date] {
         PeriodHelper.weeksInMonth(monthStart)
@@ -11,8 +15,8 @@ struct WeeksOverviewView: View {
 
     var body: some View {
         List(weeks, id: \.self) { week in
-            NavigationLink {
-                GoalListView(level: .weekly, periodStart: week)
+            Button {
+                onSelectWeek(week)
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "calendar.badge.clock")
@@ -20,27 +24,33 @@ struct WeeksOverviewView: View {
                         .font(.title3)
                     Text(PeriodHelper.displayRange(for: .weekly, periodStart: week))
                         .font(.title3.weight(.semibold))
+                    Spacer()
                 }
                 .padding(.vertical, 8)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
         }
         .listStyle(.inset)
         .navigationTitle("\(PeriodHelper.displayRange(for: .monthly, periodStart: monthStart)) апталары")
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
-                NavigationLink {
-                    GoalListView(level: .monthly, periodStart: monthStart)
-                } label: {
-                    Image(systemName: "chevron.left")
+                if let onNavigateUp {
+                    Button {
+                        onNavigateUp()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .help("Айға қайту")
                 }
-                .help("Айға қайту")
-
-                NavigationLink {
-                    GoalListView(level: .weekly, periodStart: weeks.first ?? monthStart)
-                } label: {
-                    Image(systemName: "chevron.right")
+                if let onNavigateDown {
+                    Button {
+                        onNavigateDown()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .help("Аптаға өту")
                 }
-                .help("Аптаға өту")
             }
         }
     }

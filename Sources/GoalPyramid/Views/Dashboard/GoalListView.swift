@@ -2,9 +2,16 @@ import SwiftUI
 import SwiftData
 
 /// Белгілі бір деңгей + кезең үшін мақсаттар тізімі (Create / Edit / Delete + прогресс).
+///
+/// `onNavigateUp`/`onNavigateDown` — иерархия бойынша жоғары/төмен өту үшін
+/// (◄/►, тек мәні берілгенде көрінеді). Бұлар **push жасамайды** — тек
+/// шақырушы жақтан берілген closure арқылы қай бет көрсетілетінін ауыстырады,
+/// сондықтан macOS-тың өз "артқа" батырмасы қосарланып шықпайды.
 struct GoalListView: View {
     let level: GoalLevel
     let periodStart: Date
+    var onNavigateUp: (() -> Void)?
+    var onNavigateDown: (() -> Void)?
 
     @Query private var allGoals: [GoalItem]
 
@@ -68,122 +75,24 @@ struct GoalListView: View {
                     Label("Жаңа мақсат қосу", systemImage: "plus.circle.fill")
                 }
             }
-
-            Section {
-                if level == .fiveYear {
-                    NavigationLink {
-                        MonthsOverviewView(year: PeriodHelper.year(of: periodStart))
-                    } label: {
-                        Label("Айларға өту", systemImage: "arrow.right.circle.fill")
-                    }
-                }
-
-                if level == .monthly {
-                    NavigationLink {
-                        WeeksOverviewView(monthStart: periodStart)
-                    } label: {
-                        Label("Апталарға өту", systemImage: "arrow.right.circle.fill")
-                    }
-                    NavigationLink {
-                        GoalListView(
-                            level: .fiveYear,
-                            periodStart: PeriodHelper.yearStart(PeriodHelper.year(of: periodStart))
-                        )
-                    } label: {
-                        Label("Жылға қайту", systemImage: "arrow.up.circle")
-                    }
-                }
-
-                if level == .weekly {
-                    NavigationLink {
-                        DaysOverviewView(weekStart: periodStart)
-                    } label: {
-                        Label("Күндерге өту", systemImage: "arrow.right.circle.fill")
-                    }
-                    NavigationLink {
-                        GoalListView(
-                            level: .monthly,
-                            periodStart: PeriodHelper.periodStart(for: .monthly, containing: periodStart)
-                        )
-                    } label: {
-                        Label("Айға қайту", systemImage: "arrow.up.circle")
-                    }
-                }
-
-                if level == .daily {
-                    NavigationLink {
-                        GoalListView(
-                            level: .weekly,
-                            periodStart: PeriodHelper.periodStart(for: .weekly, containing: periodStart)
-                        )
-                    } label: {
-                        Label("Аптаға қайту", systemImage: "arrow.up.circle")
-                    }
-                }
-            }
         }
         .listStyle(.inset)
         .navigationTitle(navTitle)
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
-                switch level {
-                case .fiveYear:
-                    NavigationLink {
-                        MonthsOverviewView(year: PeriodHelper.year(of: periodStart))
-                    } label: {
-                        Image(systemName: "chevron.right")
-                    }
-                    .help("Айларға өту")
-
-                case .monthly:
-                    NavigationLink {
-                        GoalListView(
-                            level: .fiveYear,
-                            periodStart: PeriodHelper.yearStart(PeriodHelper.year(of: periodStart))
-                        )
+                if let onNavigateUp {
+                    Button {
+                        onNavigateUp()
                     } label: {
                         Image(systemName: "chevron.left")
                     }
-                    .help("Жылға қайту")
-
-                    NavigationLink {
-                        WeeksOverviewView(monthStart: periodStart)
+                }
+                if let onNavigateDown {
+                    Button {
+                        onNavigateDown()
                     } label: {
                         Image(systemName: "chevron.right")
                     }
-                    .help("Апталарға өту")
-
-                case .weekly:
-                    NavigationLink {
-                        GoalListView(
-                            level: .monthly,
-                            periodStart: PeriodHelper.periodStart(for: .monthly, containing: periodStart)
-                        )
-                    } label: {
-                        Image(systemName: "chevron.left")
-                    }
-                    .help("Айға қайту")
-
-                    NavigationLink {
-                        DaysOverviewView(weekStart: periodStart)
-                    } label: {
-                        Image(systemName: "chevron.right")
-                    }
-                    .help("Күндерге өту")
-
-                case .daily:
-                    NavigationLink {
-                        GoalListView(
-                            level: .weekly,
-                            periodStart: PeriodHelper.periodStart(for: .weekly, containing: periodStart)
-                        )
-                    } label: {
-                        Image(systemName: "chevron.left")
-                    }
-                    .help("Аптаға қайту")
-
-                case .yearly:
-                    EmptyView()
                 }
             }
         }

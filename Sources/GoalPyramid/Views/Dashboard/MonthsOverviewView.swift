@@ -2,8 +2,13 @@ import SwiftUI
 
 /// Берілген жылдың 12 айының тізімі — ағаш навигациядағы "Ай" деңгейінің
 /// таңдау беті ("5 Жыл" → Жыл → **Ай** → Апта → Күн).
+/// Жол таңдау мен ◄/► push жасамайды — тек `onSelectMonth`/`onNavigateUp`/
+/// `onNavigateDown` арқылы иесі-View-ге қай бет керек екенін хабарлайды.
 struct MonthsOverviewView: View {
     let year: Int
+    var onSelectMonth: (Int) -> Void
+    var onNavigateUp: (() -> Void)?
+    var onNavigateDown: (() -> Void)?
 
     private var monthSymbols: [String] {
         let df = DateFormatter()
@@ -13,8 +18,8 @@ struct MonthsOverviewView: View {
 
     var body: some View {
         List(1...12, id: \.self) { month in
-            NavigationLink {
-                GoalListView(level: .monthly, periodStart: PeriodHelper.monthStart(year: year, month: month))
+            Button {
+                onSelectMonth(month)
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "calendar")
@@ -22,27 +27,33 @@ struct MonthsOverviewView: View {
                         .font(.title3)
                     Text(monthSymbols[month - 1])
                         .font(.title3.weight(.semibold))
+                    Spacer()
                 }
                 .padding(.vertical, 8)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
         }
         .listStyle(.inset)
         .navigationTitle("\(String(year)) жылдың айлары")
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
-                NavigationLink {
-                    GoalListView(level: .fiveYear, periodStart: PeriodHelper.yearStart(year))
-                } label: {
-                    Image(systemName: "chevron.left")
+                if let onNavigateUp {
+                    Button {
+                        onNavigateUp()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .help("Жылға қайту")
                 }
-                .help("Жылға қайту")
-
-                NavigationLink {
-                    GoalListView(level: .monthly, periodStart: PeriodHelper.monthStart(year: year, month: 1))
-                } label: {
-                    Image(systemName: "chevron.right")
+                if let onNavigateDown {
+                    Button {
+                        onNavigateDown()
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .help("Айға өту")
                 }
-                .help("Айға өту")
             }
         }
     }

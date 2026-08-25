@@ -1,24 +1,14 @@
 import SwiftUI
-import SwiftData
 
-/// "5 Жыл" бөлімінің бүкіл ағаш навигациясының иесі: 5 Жыл → Жыл → Ай →
-/// Апта → Күн. Барлық ауысу (жол таңдау және ◄/►) `stop` мәнін ауыстыру
-/// арқылы жасалады — **NavigationLink push қолданылмайды**, сондықтан
-/// macOS-тың өз "артқа" батырмасы ешқашан пайда болмайды: әр бетте тек
-/// осы файлда/GoalListView-де анық қосылған ◄/► ғана көрінеді.
-struct FiveYearOverviewView: View {
-    private enum Stop: Hashable {
-        case years
-        case year(Int)
-        case months(Int)
-        case month(Date)
-        case weeks(Date)
-        case week(Date)
-        case days(Date)
-        case day(Date)
-    }
-
-    @State private var stop: Stop = .years
+/// Бүгін/Апта/Ай/5 Жыл сайдбар тармақтарының бәрі бөлісетін кезең-иерархия
+/// шежіресі: 5 Жыл → Жыл → Ай → Апта → Күн. Қай бет көрсетілетінін сырттан
+/// `stop` арқылы басқаруға болады (мыс. "Бүгін" — `.day(today)`-дан
+/// бастайды, "5 Жыл" — `.years`-тан). Барлық ауысу (жол таңдау, ◄/►)
+/// `stop`-ты ауыстыру арқылы ғана жасалады — **NavigationLink push
+/// қолданылмайды**, сондықтан macOS-тың өз "артқа" батырмасы ешқашан
+/// пайда болмайды.
+struct PeriodExplorerView: View {
+    @Binding var stop: PeriodStop
 
     private var years: [Int] {
         let currentYear = PeriodHelper.year(of: Date())

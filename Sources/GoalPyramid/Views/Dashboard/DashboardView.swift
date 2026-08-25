@@ -30,8 +30,15 @@ enum DashboardSection: String, CaseIterable, Identifiable {
 }
 
 /// Негізгі терезе: сол жақта секция таңдау, оң жақта сол секцияға сай көрініс.
+///
+/// "Бүгін"/"Апта"/"Ай"/"5 Жыл" төртеуі де бір ортақ `periodStop` күйі арқылы
+/// `PeriodExplorerView`-ды бөліседі — сайдбардан қайсысын бассаң, `periodStop`
+/// сол секцияның бастапқы нүктесіне (бүгінгі күн/осы апта/осы ай/жылдар
+/// тізімі) қалпына келеді, содан кейін ◄/► арқылы иерархия бойынша еркін
+/// жылжуға болады.
 struct DashboardView: View {
     @State private var selection: DashboardSection? = .today
+    @State private var periodStop: PeriodStop = .day(PeriodHelper.periodStart(for: .daily))
 
     var body: some View {
         NavigationSplitView {
@@ -43,20 +50,28 @@ struct DashboardView: View {
             .listStyle(.sidebar)
         } detail: {
             switch selection ?? .today {
-            case .today:
-                GoalListView(level: .daily, periodStart: PeriodHelper.periodStart(for: .daily))
-            case .week:
-                GoalListView(level: .weekly, periodStart: PeriodHelper.periodStart(for: .weekly))
-            case .month:
-                GoalListView(level: .monthly, periodStart: PeriodHelper.periodStart(for: .monthly))
+            case .today, .week, .month, .fiveYear:
+                PeriodExplorerView(stop: $periodStop)
             case .year:
                 GoalListView(level: .yearly, periodStart: PeriodHelper.periodStart(for: .yearly))
-            case .fiveYear:
-                FiveYearOverviewView()
             case .analytics:
                 AnalyticsView()
             case .trash:
                 TrashView()
+            }
+        }
+        .onChange(of: selection) { _, newValue in
+            switch newValue {
+            case .today:
+                periodStop = .day(PeriodHelper.periodStart(for: .daily))
+            case .week:
+                periodStop = .week(PeriodHelper.periodStart(for: .weekly))
+            case .month:
+                periodStop = .month(PeriodHelper.periodStart(for: .monthly))
+            case .fiveYear:
+                periodStop = .years
+            case .year, .analytics, .trash, nil:
+                break
             }
         }
     }

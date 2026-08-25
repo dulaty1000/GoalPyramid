@@ -124,6 +124,69 @@ struct GoalListView: View {
         }
         .listStyle(.inset)
         .navigationTitle(navTitle)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigation) {
+                switch level {
+                case .fiveYear:
+                    NavigationLink {
+                        MonthsOverviewView(year: PeriodHelper.year(of: periodStart))
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .help("Айларға өту")
+
+                case .monthly:
+                    NavigationLink {
+                        GoalListView(
+                            level: .fiveYear,
+                            periodStart: PeriodHelper.yearStart(PeriodHelper.year(of: periodStart))
+                        )
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .help("Жылға қайту")
+
+                    NavigationLink {
+                        WeeksOverviewView(monthStart: periodStart)
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .help("Апталарға өту")
+
+                case .weekly:
+                    NavigationLink {
+                        GoalListView(
+                            level: .monthly,
+                            periodStart: PeriodHelper.periodStart(for: .monthly, containing: periodStart)
+                        )
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .help("Айға қайту")
+
+                    NavigationLink {
+                        DaysOverviewView(weekStart: periodStart)
+                    } label: {
+                        Image(systemName: "chevron.right")
+                    }
+                    .help("Күндерге өту")
+
+                case .daily:
+                    NavigationLink {
+                        GoalListView(
+                            level: .weekly,
+                            periodStart: PeriodHelper.periodStart(for: .weekly, containing: periodStart)
+                        )
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                    .help("Аптаға қайту")
+
+                case .yearly:
+                    EmptyView()
+                }
+            }
+        }
         .sheet(isPresented: $showingAdd) {
             AddEditGoalSheet(level: level, periodStart: periodStart, parentID: nil, existingGoal: nil)
         }

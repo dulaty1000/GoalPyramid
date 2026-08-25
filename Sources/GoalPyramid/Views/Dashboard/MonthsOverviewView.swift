@@ -3,11 +3,7 @@ import SwiftUI
 /// Берілген жылдың 12 айының тізімі — ағаш навигациядағы "Ай" деңгейінің
 /// таңдау беті ("5 Жыл" → Жыл → **Ай** → Апта → Күн).
 struct MonthsOverviewView: View {
-    @State private var year: Int
-
-    init(year: Int) {
-        _year = State(initialValue: year)
-    }
+    let year: Int
 
     private var monthSymbols: [String] {
         let df = DateFormatter()
@@ -32,22 +28,5 @@ struct MonthsOverviewView: View {
         }
         .listStyle(.inset)
         .navigationTitle("\(year) жылдың айлары")
-        .toolbar {
-            ToolbarItemGroup(placement: .navigation) {
-                Button {
-                    year -= 1
-                } label: {
-                    Image(systemName: "chevron.left")
-                }
-                .help("Алдыңғы жыл")
-
-                Button {
-                    year += 1
-                } label: {
-                    Image(systemName: "chevron.right")
-                }
-                .help("Келесі жыл")
-            }
-        }
     }
 }

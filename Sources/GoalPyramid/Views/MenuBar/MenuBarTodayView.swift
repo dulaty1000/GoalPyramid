@@ -57,11 +57,9 @@ struct MenuBarTodayView: View {
             Divider()
 
             HStack {
-                if todayGoals.count < GoalStore.maxPerPeriod {
-                    Button("+ Тапсырма қосу") { showingAdd = true }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.blue)
-                }
+                Button("+ Тапсырма қосу") { showingAdd = true }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.blue)
                 Spacer()
                 Button("Толық терезе") {
                     NSApp.activate(ignoringOtherApps: true)

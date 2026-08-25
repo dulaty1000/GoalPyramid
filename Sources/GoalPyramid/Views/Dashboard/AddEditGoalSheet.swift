@@ -98,10 +98,6 @@ struct AddEditGoalSheet: View {
                 GoalStore.toggleCompletion(goal)
             }
         } else {
-            guard GoalStore.canAdd(level: level, periodStart: periodStart, in: context) else {
-                dismiss()
-                return
-            }
             let newGoal = GoalItem(
                 title: trimmed,
                 level: level,

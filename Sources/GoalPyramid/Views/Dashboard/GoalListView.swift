@@ -31,7 +31,7 @@ struct GoalListView: View {
                         .foregroundStyle(.secondary)
                     ProgressView(value: progress)
                         .tint(progress == 1 ? .green : Color.accentColor)
-                    Text("\(goals.count)/\(GoalStore.maxPerPeriod) мақсат · \(Int(progress * 100))% орындалды")
+                    Text("\(goals.filter(\.isCompleted).count)/\(goals.count) мақсат · \(Int(progress * 100))% орындалды")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -52,12 +52,10 @@ struct GoalListView: View {
                         }
                 }
 
-                if goals.count < GoalStore.maxPerPeriod {
-                    Button {
-                        showingAdd = true
-                    } label: {
-                        Label("Жаңа мақсат қосу", systemImage: "plus.circle.fill")
-                    }
+                Button {
+                    showingAdd = true
+                } label: {
+                    Label("Жаңа мақсат қосу", systemImage: "plus.circle.fill")
                 }
             }
         }

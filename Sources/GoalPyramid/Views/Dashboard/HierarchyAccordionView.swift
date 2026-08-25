@@ -59,7 +59,7 @@ struct HierarchyAccordionView: View {
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Text("\(items.count)/3")
+                            Text("\(items.filter(\.isCompleted).count)/\(items.count)")
                                 .font(.caption.monospacedDigit())
                                 .foregroundStyle(.secondary)
                             ProgressView(value: progress(items))

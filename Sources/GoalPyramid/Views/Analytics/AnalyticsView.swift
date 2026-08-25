@@ -22,8 +22,26 @@ struct AnalyticsView: View {
         }
     }
 
-    private func totalCount(for level: GoalLevel) -> Int {
-        activeGoals.filter { $0.level == level }.count
+    private struct LevelCountRow: Identifiable {
+        let id = UUID()
+        let label: String
+        let total: Int
+        let completed: Int
+        var pending: Int { total - completed }
+    }
+
+    private func levelCountRow(label: String, level: GoalLevel) -> LevelCountRow {
+        let items = activeGoals.filter { $0.level == level }
+        return LevelCountRow(label: label, total: items.count, completed: items.filter(\.isCompleted).count)
+    }
+
+    private var levelCountRows: [LevelCountRow] {
+        [
+            levelCountRow(label: "Жыл", level: .yearly),
+            levelCountRow(label: "Ай", level: .monthly),
+            levelCountRow(label: "Апта", level: .weekly),
+            levelCountRow(label: "Күн", level: .daily)
+        ]
     }
 
     private var last30DaysTrend: [(Date, Int)] {
@@ -72,17 +90,39 @@ struct AnalyticsView: View {
                 }
 
                 card(title: "Деңгей бойынша барлық сан") {
-                    VStack(alignment: .leading, spacing: 12) {
-                        countRow(label: "Жыл", count: totalCount(for: .yearly))
-                        countRow(label: "Ай", count: totalCount(for: .monthly))
-                        countRow(label: "Апта", count: totalCount(for: .weekly))
-                        countRow(label: "Күн", count: totalCount(for: .daily))
+                    Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 10) {
+                        GridRow {
+                            Text("")
+                            Text("Барлығы")
+                            Text("Орындалмағандар")
+                            Text("Орындалғандар")
+                        }
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+
+                        Divider()
+                            .gridCellColumns(4)
+
+                        ForEach(levelCountRows) { row in
+                            GridRow {
+                                Text(row.label)
+                                    .font(.subheadline.weight(.semibold))
+                                Text("\(row.total)")
+                                    .font(.title3.bold())
+                                Text("\(row.pending)")
+                                    .font(.title3.bold())
+                                    .foregroundStyle(.orange)
+                                Text("\(row.completed)")
+                                    .font(.title3.bold())
+                                    .foregroundStyle(.green)
+                            }
+                        }
                     }
 
                     Text("Кеңес: әр бөлім келесі бөлікке қарағанда 3 есе көп болса жақсы")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .padding(.top, 6)
+                        .padding(.top, 10)
                 }
 
                 card(title: "Жетістіктер картасы (соңғы 1 жыл)") {
@@ -116,17 +156,6 @@ struct AnalyticsView: View {
             statCard(title: "Барлық мақсаттар", value: "\(activeGoals.count)")
             statCard(title: "Орындалды", value: "\(activeGoals.filter(\.isCompleted).count)")
             statCard(title: "Жалпы пайыз", value: "\(Int(overallCompletionRate * 100))%")
-        }
-    }
-
-    private func countRow(label: String, count: Int) -> some View {
-        HStack(spacing: 10) {
-            Text(label)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .frame(width: 56, alignment: .leading)
-            Text("\(count) мақсат")
-                .font(.title3.bold())
         }
     }
 

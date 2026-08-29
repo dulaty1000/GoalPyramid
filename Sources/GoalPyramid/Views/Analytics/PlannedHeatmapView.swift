@@ -1,9 +1,14 @@
 import SwiftUI
 import Foundation
 
-/// GitHub commit-графигіне ұқсас жылдық "жетістіктер картасы": әр шаршы — бір
-/// күн, түс қанықтығы сол күні орындалған күндік мақсаттардың пайызына сай.
-struct GoalHeatmapView: View {
+/// `GoalHeatmapView`-дың қасында тұратын, "Жетістіктер картасы"-ның
+/// жұбы: сол күні орындалғанын емес, сол күнге ЖОСПАРЛАНҒАН (periodStart)
+/// күндік мақсаттар/тапсырмалар санын көрсетеді. Түсі — қызғылт сары,
+/// қанықтығы санына сатылап өседі: 1 мақсат — әлсіз, 2 — орташа,
+/// 3+ — қанық. Есептеу логикасы `GoalHeatmapView`-мен бірдей (тор өлшемі,
+/// апта/ай белгілері), тек түс пен көрсеткіш өзгеше — сол екінші картаны
+/// өзгеріссіз қалдыру үшін бөлек файл ретінде сақталды.
+struct PlannedHeatmapView: View {
     let dailyGoals: [GoalItem]
 
     @Environment(\.colorScheme) private var colorScheme
@@ -17,14 +22,14 @@ struct GoalHeatmapView: View {
     /// Бүгінгі апта дәл ортаңғы бағанда тұратындай: сол жақта 26 апта
     /// (өткен), оң жақта 26 апта (алдағы, әлі деректер жоқ) — әр аптада
     /// толық 7 күн болғандықтан бос (nil) шаршы мүлдем болмайды, сондықтан
-    /// бүгінгі баған ешқашан шетке қарай ауытқымайды.
+    /// бүгінгі баған ешқашан шетке қарай ауытқымайды. `GoalHeatmapView`-мен
+    /// бірдей есептеу — екі карта әрдайым синхронды (бірдей бағандар).
     private let weeksHalfSpan = 26
 
     private var todayWeekStart: Date {
         PeriodHelper.periodStart(for: .weekly, containing: Date())
     }
 
-    /// Аптасына 7 күннен бағандар: [апта][дүйсенбі...жексенбі].
     private var paddedWeeks: [[Date]] {
         let cal = PeriodHelper.calendar
         return (-weeksHalfSpan...weeksHalfSpan).map { weekOffset -> [Date] in
@@ -58,15 +63,12 @@ struct GoalHeatmapView: View {
         return labels
     }
 
-    private var statsByDay: [Date: (total: Int, completed: Int)] {
-        var dict: [Date: (total: Int, completed: Int)] = [:]
+    private var countByDay: [Date: Int] {
+        var dict: [Date: Int] = [:]
         let cal = PeriodHelper.calendar
         for goal in dailyGoals {
             let day = cal.startOfDay(for: goal.periodStart)
-            var entry = dict[day] ?? (0, 0)
-            entry.total += 1
-            if goal.isCompleted { entry.completed += 1 }
-            dict[day] = entry
+            dict[day, default: 0] += 1
         }
         return dict
     }
@@ -76,7 +78,7 @@ struct GoalHeatmapView: View {
     }
 
     private var fullRGB: (Double, Double, Double) {
-        colorScheme == .dark ? (0.20, 0.78, 0.35) : (0.13, 0.55, 0.20)
+        colorScheme == .dark ? (1.00, 0.58, 0.00) : (0.80, 0.40, 0.00)
     }
 
     private func interpolatedColor(factor: Double) -> Color {
@@ -89,16 +91,19 @@ struct GoalHeatmapView: View {
         )
     }
 
-    private func color(for date: Date) -> Color {
-        guard let stat = statsByDay[date], stat.total > 0 else {
-            return interpolatedColor(factor: 0)
+    /// Санына қарай сатылап өсетін қанықтық: 0 → түссіз, 1 → әлсіз,
+    /// 2 → орташа, 3+ → қанық.
+    private func factor(forCount count: Int) -> Double {
+        switch count {
+        case 0: return 0
+        case 1: return 0.35
+        case 2: return 0.65
+        default: return 1.0
         }
-        // Ескі формула (0.22 + rate*0.78) кез келген жоспарланған, бірақ
-        // әлі орындалмаған (rate == 0) күнге де азды-көпті жасыл түс беретін —
-        // соның салдарынан "0/1 орындалды" күн де жасыл жанып тұратын. Енді
-        // тек нақты орындалу пайызы ғана есептеледі: rate == 0 → түссіз/сұр.
-        let rate = Double(stat.completed) / Double(stat.total)
-        return interpolatedColor(factor: rate)
+    }
+
+    private func color(for date: Date) -> Color {
+        interpolatedColor(factor: factor(forCount: countByDay[date] ?? 0))
     }
 
     private func weekdayLabel(_ row: Int) -> String {
@@ -115,10 +120,9 @@ struct GoalHeatmapView: View {
         df.locale = language.locale
         df.dateFormat = AppDateFormat.current.pattern
         let dateStr = df.string(from: date)
-        guard let stat = statsByDay[date], stat.total > 0 else {
-            return L10n.heatmapNoGoals(dateStr: dateStr, language)
-        }
-        return L10n.heatmapCompletedSummary(dateStr: dateStr, completed: stat.completed, total: stat.total, language)
+        let count = countByDay[date] ?? 0
+        guard count > 0 else { return L10n.heatmapNoPlan(dateStr: dateStr, language) }
+        return L10n.heatmapPlannedSummary(dateStr: dateStr, count: count, language)
     }
 
     var body: some View {

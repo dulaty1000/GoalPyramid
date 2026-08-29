@@ -16,10 +16,50 @@ struct TrashView: View {
         sort: \NoteItem.deletedAt,
         order: .reverse
     ) private var trashedNotes: [NoteItem]
+    @Query(
+        filter: #Predicate<ProjectItem> { $0.isDeleted },
+        sort: \ProjectItem.deletedAt,
+        order: .reverse
+    ) private var trashedProjects: [ProjectItem]
+    @Query(
+        filter: #Predicate<HabitItem> { $0.isDeleted },
+        sort: \HabitItem.deletedAt,
+        order: .reverse
+    ) private var trashedHabits: [HabitItem]
+    @Query private var allGoals: [GoalItem]
+    @Query private var allAttachments: [NoteAttachment]
 
     @State private var showingConfirmClear = false
 
-    private var isEmpty: Bool { trashedGoals.isEmpty && trashedNotes.isEmpty }
+    /// Терезе түбірінен келеді — тіл ауысқанда осы бет дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
+
+    private var isEmpty: Bool {
+        trashedGoals.isEmpty && trashedNotes.isEmpty && trashedProjects.isEmpty && trashedHabits.isEmpty
+    }
+
+    private func tasks(of project: ProjectItem) -> [GoalItem] {
+        allGoals.filter { $0.projectID == project.id }
+    }
+
+    private func tasks(of habit: HabitItem) -> [GoalItem] {
+        allGoals.filter { $0.habitID == habit.id }
+    }
+
+    /// Идея параққа тиесілі тіркемелер — параққа физикалық файлдары да
+    /// қоса түбегейлі жойылғанда пайдаланылады.
+    private func attachments(of note: NoteItem) -> [NoteAttachment] {
+        allAttachments.filter { $0.noteID == note.id }
+    }
+
+    private func permanentlyDelete(_ note: NoteItem) {
+        for attachment in attachments(of: note) {
+            AttachmentStore.delete(storedFileName: attachment.storedFileName)
+            context.delete(attachment)
+        }
+        context.delete(note)
+    }
 
     var body: some View {
         List {
@@ -28,25 +68,27 @@ struct TrashView: View {
                     Button(role: .destructive) {
                         showingConfirmClear = true
                     } label: {
-                        Label("Барлығын өшіру", systemImage: "trash.slash.fill")
+                        Label(L10n.t(.deleteAllAction, language), systemImage: "trash.slash.fill")
                     }
                 }
             }
 
             if isEmpty {
                 Section {
-                    Text("Қоқыс бос")
+                    Text(L10n.t(.trashEmpty, language))
                         .foregroundStyle(.secondary)
                 }
             } else {
                 if !trashedGoals.isEmpty {
-                    Section("Мақсаттар") {
+                    Section(L10n.t(.goalsSection, language)) {
                         ForEach(trashedGoals) { goal in
                             HStack(spacing: 12) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(goal.title)
                                         .strikethrough()
-                                    Text("\(goal.level.title) · \(PeriodHelper.displayRange(for: goal.level, periodStart: goal.periodStart))")
+                                    Text(goal.hasDueDate
+                                        ? "\(goal.level.title(language)) · \(PeriodHelper.displayRange(for: goal.level, periodStart: goal.periodStart))"
+                                        : "\(goal.level.title(language)) · \(L10n.t(.noDateLabel, language))")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
@@ -56,14 +98,14 @@ struct TrashView: View {
                                 Button {
                                     GoalStore.restore(goal)
                                 } label: {
-                                    Label("Қалпына келтіру", systemImage: "arrow.uturn.backward")
+                                    Label(L10n.t(.restoreAction, language), systemImage: "arrow.uturn.backward")
                                 }
                                 .buttonStyle(.bordered)
 
                                 Button(role: .destructive) {
                                     context.delete(goal)
                                 } label: {
-                                    Label("Жою", systemImage: "xmark.circle")
+                                    Label(L10n.t(.deleteAction, language), systemImage: "xmark.circle")
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -73,13 +115,13 @@ struct TrashView: View {
                 }
 
                 if !trashedNotes.isEmpty {
-                    Section("Идея парақтары") {
+                    Section(L10n.t(.notesSection, language)) {
                         ForEach(trashedNotes) { note in
                             HStack(spacing: 12) {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(note.title.isEmpty ? "Атаусыз парақ" : note.title)
+                                    Text(note.title.isEmpty ? L10n.t(.untitledNote, language) : note.title)
                                         .strikethrough()
-                                    Text(note.content.isEmpty ? "Бос парақ" : note.content)
+                                    Text(note.content.isEmpty ? L10n.t(.emptyNoteContent, language) : note.content)
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
@@ -90,14 +132,84 @@ struct TrashView: View {
                                 Button {
                                     NoteStore.restore(note)
                                 } label: {
-                                    Label("Қалпына келтіру", systemImage: "arrow.uturn.backward")
+                                    Label(L10n.t(.restoreAction, language), systemImage: "arrow.uturn.backward")
                                 }
                                 .buttonStyle(.bordered)
 
                                 Button(role: .destructive) {
-                                    context.delete(note)
+                                    permanentlyDelete(note)
                                 } label: {
-                                    Label("Жою", systemImage: "xmark.circle")
+                                    Label(L10n.t(.deleteAction, language), systemImage: "xmark.circle")
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+
+                if !trashedHabits.isEmpty {
+                    Section(L10n.t(.habitsSection, language)) {
+                        ForEach(trashedHabits) { habit in
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(habit.title.isEmpty ? L10n.t(.untitledHabit, language) : habit.title)
+                                        .strikethrough()
+                                    if !habit.notes.isEmpty {
+                                        Text(habit.notes)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Button {
+                                    HabitStore.restore(habit, tasks: tasks(of: habit).filter(\.isDeleted))
+                                } label: {
+                                    Label(L10n.t(.restoreAction, language), systemImage: "arrow.uturn.backward")
+                                }
+                                .buttonStyle(.bordered)
+
+                                Button(role: .destructive) {
+                                    for task in tasks(of: habit) {
+                                        context.delete(task)
+                                    }
+                                    context.delete(habit)
+                                } label: {
+                                    Label(L10n.t(.deleteAction, language), systemImage: "xmark.circle")
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+
+                if !trashedProjects.isEmpty {
+                    Section(L10n.t(.sidebarProjects, language)) {
+                        ForEach(trashedProjects) { project in
+                            HStack(spacing: 12) {
+                                Text(project.title)
+                                    .strikethrough()
+
+                                Spacer()
+
+                                Button {
+                                    ProjectStore.restore(project, tasks: tasks(of: project).filter(\.isDeleted))
+                                } label: {
+                                    Label(L10n.t(.restoreAction, language), systemImage: "arrow.uturn.backward")
+                                }
+                                .buttonStyle(.bordered)
+
+                                Button(role: .destructive) {
+                                    for task in tasks(of: project) {
+                                        context.delete(task)
+                                    }
+                                    context.delete(project)
+                                } label: {
+                                    Label(L10n.t(.deleteAction, language), systemImage: "xmark.circle")
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -108,19 +220,38 @@ struct TrashView: View {
             }
         }
         .listStyle(.inset)
-        .navigationTitle("Қоқыс")
-        .alert("Барлық қоқысты өшіру керек пе?", isPresented: $showingConfirmClear) {
-            Button("Болдырмау", role: .cancel) {}
-            Button("Өшіру", role: .destructive) {
+        .navigationTitle(L10n.t(.sidebarTrash, language))
+        .alert(L10n.t(.deleteAllConfirmTitle, language), isPresented: $showingConfirmClear) {
+            Button(L10n.t(.settingsCancel, language), role: .cancel) {}
+            Button(L10n.t(.confirmDeleteAction, language), role: .destructive) {
+                // Жобаға тиесілі тапсырма `trashedGoals`-та да, сол жобаның
+                // `tasks(of:)` тізімінде де кездесуі мүмкін — бірдей жазбаны
+                // екі рет context.delete() шақырмау үшін бақыланады.
+                var deletedIDs = Set<PersistentIdentifier>()
                 for goal in trashedGoals {
                     context.delete(goal)
+                    deletedIDs.insert(goal.persistentModelID)
                 }
                 for note in trashedNotes {
-                    context.delete(note)
+                    permanentlyDelete(note)
+                }
+                for habit in trashedHabits {
+                    for task in tasks(of: habit) where !deletedIDs.contains(task.persistentModelID) {
+                        context.delete(task)
+                        deletedIDs.insert(task.persistentModelID)
+                    }
+                    context.delete(habit)
+                }
+                for project in trashedProjects {
+                    for task in tasks(of: project) where !deletedIDs.contains(task.persistentModelID) {
+                        context.delete(task)
+                        deletedIDs.insert(task.persistentModelID)
+                    }
+                    context.delete(project)
                 }
             }
         } message: {
-            Text("Бұл әрекетті болдырмау мүмкін емес.")
+            Text(L10n.t(.actionIrreversible, language))
         }
     }
 }

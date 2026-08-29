@@ -5,7 +5,19 @@ import Foundation
 
 /// Прогресс аналитикасы: деңгей бойынша орындалу, деңгей бойынша барлық сан, соңғы 30 күндік тренд.
 struct AnalyticsView: View {
-    @Query(filter: #Predicate<GoalItem> { !$0.isDeleted }) private var activeGoals: [GoalItem]
+    // `habitID == nil` — "Дағдылар"-дан автоматты жасалған "Бүгін"
+    // тапсырмалары Аналитиканың БАРЛЫҚ есептеулерінен (heatmap-тар,
+    // деңгей бойынша пайыз, т.б.) осылай толығымен тыс қалады.
+    @Query(filter: #Predicate<GoalItem> { !$0.isDeleted && $0.habitID == nil }) private var activeGoals: [GoalItem]
+    // Дәл осы екі @Query — жоғарыдағы `activeGoals`-тан МҮЛДЕМ бөлек:
+    // тек "Дағдылар" графигі үшін ғана қолданылады, басқа ешбір
+    // Аналитика есептеуіне (heatmap, кесте, т.б.) араласпайды.
+    @Query(filter: #Predicate<HabitItem> { !$0.isDeleted }) private var habitsForChart: [HabitItem]
+    @Query(filter: #Predicate<GoalItem> { !$0.isDeleted && $0.habitID != nil }) private var habitGoalsForChart: [GoalItem]
+
+    /// Терезе түбірінен келеді — тіл ауысқанда осы бет дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
 
     private struct LevelStat: Identifiable {
         let id = UUID()
@@ -37,10 +49,10 @@ struct AnalyticsView: View {
 
     private var levelCountRows: [LevelCountRow] {
         [
-            levelCountRow(label: "Жыл", level: .yearly),
-            levelCountRow(label: "Ай", level: .monthly),
-            levelCountRow(label: "Апта", level: .weekly),
-            levelCountRow(label: "Күн", level: .daily)
+            levelCountRow(label: GoalLevel.yearly.shortTitle(language), level: .yearly),
+            levelCountRow(label: GoalLevel.monthly.shortTitle(language), level: .monthly),
+            levelCountRow(label: GoalLevel.weekly.shortTitle(language), level: .weekly),
+            levelCountRow(label: GoalLevel.daily.shortTitle(language), level: .daily)
         ]
     }
 
@@ -49,7 +61,7 @@ struct AnalyticsView: View {
         let today = cal.startOfDay(for: Date())
         return (0..<30).reversed().compactMap { offset -> (Date, Int)? in
             guard let day = cal.date(byAdding: .day, value: -offset, to: today) else { return nil }
-            let items = activeGoals.filter { $0.level == .daily && $0.periodStart == day }
+            let items = activeGoals.filter { $0.level == .daily && $0.periodStart == day && $0.hasDueDate }
             return (day, items.filter(\.isCompleted).count)
         }
     }
@@ -61,24 +73,24 @@ struct AnalyticsView: View {
     }
 
     private var dailyGoals: [GoalItem] {
-        activeGoals.filter { $0.level == .daily }
+        activeGoals.filter { $0.level == .daily && $0.hasDueDate }
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                Text("Аналитика")
+                Text(L10n.t(.sidebarAnalytics, language))
                     .font(.largeTitle.bold())
 
                 summaryCards
 
-                card(title: "Деңгей бойынша орындалу") {
+                card(title: L10n.t(.analyticsCompletionByLevel, language)) {
                     Chart(levelStats) { stat in
                         BarMark(
-                            x: .value("Деңгей", stat.level.shortTitle),
-                            y: .value("Пайыз", stat.rate * 100)
+                            x: .value(L10n.t(.chartLevelAxis, language), stat.level.shortTitle(language)),
+                            y: .value(L10n.t(.chartPercentAxis, language), stat.rate * 100)
                         )
-                        .foregroundStyle(Color.accentColor.gradient)
+                        .foregroundStyle(Theme.accent.gradient)
                         .annotation(position: .top) {
                             Text("\(Int(stat.rate * 100))%")
                                 .font(.caption2)
@@ -89,13 +101,13 @@ struct AnalyticsView: View {
                     .frame(height: 220)
                 }
 
-                card(title: "Деңгей бойынша барлық сан") {
+                card(title: L10n.t(.analyticsCountByLevel, language)) {
                     Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 10) {
                         GridRow {
                             Text("")
-                            Text("Барлығы")
-                            Text("Орындалмағандар")
-                            Text("Орындалғандар")
+                            Text(L10n.t(.colTotal, language))
+                            Text(L10n.t(.colPending, language))
+                            Text(L10n.t(.colCompleted, language))
                         }
                         .font(.caption.bold())
                         .foregroundStyle(.secondary)
@@ -119,32 +131,44 @@ struct AnalyticsView: View {
                         }
                     }
 
-                    Text("Кеңес: әр бөлім келесі бөлікке қарағанда 3 есе көп болса жақсы")
+                    Text(L10n.t(.pyramidTip, language))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .padding(.top, 10)
                 }
 
-                card(title: "Жетістіктер картасы (соңғы 1 жыл)") {
-                    GoalHeatmapView(dailyGoals: dailyGoals)
+                HStack(alignment: .top, spacing: 16) {
+                    card(title: L10n.t(.plannedDaysCardTitle, language)) {
+                        PlannedHeatmapView(dailyGoals: dailyGoals)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    card(title: L10n.t(.achievementsCardTitle, language)) {
+                        GoalHeatmapView(dailyGoals: dailyGoals)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
 
-                card(title: "Соңғы 30 күн (орындалған күндік тапсырмалар)") {
+                card(title: L10n.t(.last30DaysCardTitle, language)) {
                     Chart(last30DaysTrend, id: \.0) { entry in
                         LineMark(
-                            x: .value("Күн", entry.0),
-                            y: .value("Орындалды", entry.1)
+                            x: .value(L10n.t(.chartDayAxis, language), entry.0),
+                            y: .value(L10n.t(.chartCompletedAxis, language), entry.1)
                         )
                         .interpolationMethod(.catmullRom)
                         .foregroundStyle(.green)
 
                         PointMark(
-                            x: .value("Күн", entry.0),
-                            y: .value("Орындалды", entry.1)
+                            x: .value(L10n.t(.chartDayAxis, language), entry.0),
+                            y: .value(L10n.t(.chartCompletedAxis, language), entry.1)
                         )
                         .foregroundStyle(.green)
                     }
                     .frame(height: 200)
+                }
+
+                card(title: L10n.t(.habitHeatmapCardTitle, language)) {
+                    HabitHeatmapRowsView(habits: habitsForChart, habitGoals: habitGoalsForChart)
                 }
             }
             .padding(24)
@@ -153,9 +177,9 @@ struct AnalyticsView: View {
 
     private var summaryCards: some View {
         HStack(spacing: 16) {
-            statCard(title: "Барлық мақсаттар", value: "\(activeGoals.count)")
-            statCard(title: "Орындалды", value: "\(activeGoals.filter(\.isCompleted).count)")
-            statCard(title: "Жалпы пайыз", value: "\(Int(overallCompletionRate * 100))%")
+            statCard(title: L10n.t(.analyticsTotalGoals, language), value: "\(activeGoals.count)")
+            statCard(title: L10n.t(.analyticsCompleted, language), value: "\(activeGoals.filter(\.isCompleted).count)")
+            statCard(title: L10n.t(.analyticsOverallPercent, language), value: "\(Int(overallCompletionRate * 100))%")
         }
     }
 

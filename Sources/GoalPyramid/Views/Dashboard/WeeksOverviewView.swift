@@ -9,6 +9,10 @@ struct WeeksOverviewView: View {
     var onNavigateUp: (() -> Void)?
     var onNavigateDown: (() -> Void)?
 
+    /// Терезе түбірінен келеді — тіл ауысқанда осы View дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
+
     private var weeks: [Date] {
         PeriodHelper.weeksInMonth(monthStart)
     }
@@ -20,7 +24,7 @@ struct WeeksOverviewView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "calendar.badge.clock")
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Theme.accent)
                         .font(.title3)
                     Text(PeriodHelper.displayRange(for: .weekly, periodStart: week))
                         .font(.title3.weight(.semibold))
@@ -32,7 +36,7 @@ struct WeeksOverviewView: View {
             .buttonStyle(.plain)
         }
         .listStyle(.inset)
-        .navigationTitle("\(PeriodHelper.displayRange(for: .monthly, periodStart: monthStart)) апталары")
+        .navigationTitle(L10n.monthWeeksTitle(monthLabel: PeriodHelper.displayRange(for: .monthly, periodStart: monthStart), language))
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
                 if let onNavigateUp {
@@ -41,7 +45,7 @@ struct WeeksOverviewView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                     }
-                    .help("Айға қайту")
+                    .help(L10n.t(.navBackToMonth, language))
                 }
                 if let onNavigateDown {
                     Button {
@@ -49,7 +53,7 @@ struct WeeksOverviewView: View {
                     } label: {
                         Image(systemName: "chevron.right")
                     }
-                    .help("Аптаға өту")
+                    .help(L10n.t(.navForwardToWeek, language))
                 }
             }
         }

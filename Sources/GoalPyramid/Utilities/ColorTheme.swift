@@ -13,4 +13,13 @@ extension EvaluationColor {
 
 enum Theme {
     static let cardBackground = Color(nsColor: .controlBackgroundColor)
+
+    /// Пайдаланушы "Настройка" бетінде таңдаған акцент түсі. UserDefaults-тан
+    /// тікелей оқылады, сондықтан бұл қосымшада (әр бөлім навигация арқылы
+    /// қайта салынатын, бір ғана белсенді детал-панель бар архитектурада)
+    /// келесі рендерде әрдайым дұрыс мәнді көрсетеді.
+    static var accent: Color {
+        let raw = UserDefaults.standard.string(forKey: AppSettingsKey.accentColor) ?? AccentColorOption.blue.rawValue
+        return (AccentColorOption(rawValue: raw) ?? .blue).color
+    }
 }

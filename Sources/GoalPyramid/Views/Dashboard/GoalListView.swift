@@ -18,37 +18,66 @@ struct GoalListView: View {
     @State private var showingAdd = false
     @State private var editingGoal: GoalItem?
 
+    /// Терезе түбірінен келеді — тіл ауысқанда осы View дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
+
+    /// Осы деңгей + кезеңге тиесілі барлық мақсаттар (матрицаға қойылғандары
+    /// да қоса) — прогресс бұрынғыдай СОЛАРДЫҢ БӘРІН есептейді, матрицаға
+    /// қойылу прогресс санын өзгертпейді.
+    private var allPeriodGoals: [GoalItem] {
+        allGoals.excludingTrashed().filter { $0.level == level && $0.periodStart == periodStart && $0.hasDueDate }
+    }
+
+    /// Негізгі тізімде көрінетіндер — тек Эйзенхауэр матрицасына әлі
+    /// қойылмағандар (`eisenhowerQuadrant == nil`).
     private var goals: [GoalItem] {
-        allGoals
-            .filter { $0.level == level && $0.periodStart == periodStart && !$0.isDeleted }
+        allPeriodGoals
+            .filter { $0.eisenhowerQuadrant == nil }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
+    /// Матрицаға қойылғандар — тек "Бүгін" (күндік) деңгейде мағыналы.
+    private var placedGoals: [GoalItem] {
+        allPeriodGoals.filter { $0.eisenhowerQuadrant != nil }
+    }
+
     private var progress: Double {
-        guard !goals.isEmpty else { return 0 }
-        return Double(goals.filter(\.isCompleted).count) / Double(goals.count)
+        guard !allPeriodGoals.isEmpty else { return 0 }
+        return Double(allPeriodGoals.filter(\.isCompleted).count) / Double(allPeriodGoals.count)
     }
 
     private var navTitle: String {
         switch level {
         case .fiveYear:
-            return "\(PeriodHelper.year(of: periodStart)) жылғы мақсаттар"
-        case .monthly, .weekly, .daily:
-            return "\(PeriodHelper.displayRange(for: level, periodStart: periodStart)) — мақсаттар"
+            return L10n.yearGoalsTitle(year: PeriodHelper.year(of: periodStart), language)
+        case .daily, .monthly, .weekly:
+            return "\(PeriodHelper.displayRange(for: level, periodStart: periodStart))\(L10n.t(.goalsSuffix, language))"
         case .yearly:
-            return "\(level.title) мақсаттар"
+            return L10n.levelGoalsTitle(levelTitle: level.title(language), language)
         }
     }
 
     var body: some View {
         List {
+            // Мақсат саны қанша болса да, "Қосу" батырмасы тізімнің ЕҢ
+            // ЖОҒАРЫҒЫНДА тұрады — соңына дейін скролл жасамай-ақ әрдайым
+            // бірден қолжетімді ("Жобалар" бетіндегідей принцип).
+            Section {
+                Button {
+                    showingAdd = true
+                } label: {
+                    Label(L10n.t(.addGoal, language), systemImage: "plus.circle.fill")
+                }
+            }
+
             Section {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(PeriodHelper.displayRange(for: level, periodStart: periodStart))
                         .foregroundStyle(.secondary)
                     ProgressView(value: progress)
-                        .tint(progress == 1 ? .green : Color.accentColor)
-                    Text("\(goals.filter(\.isCompleted).count)/\(goals.count) мақсат · \(Int(progress * 100))% орындалды")
+                        .tint(progress == 1 ? .green : Theme.accent)
+                    Text(L10n.progressSummary(done: allPeriodGoals.filter(\.isCompleted).count, total: allPeriodGoals.count, percent: Int(progress * 100), language))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -57,22 +86,40 @@ struct GoalListView: View {
 
             Section {
                 ForEach(goals) { goal in
-                    GoalRowView(goal: goal)
-                        .contentShape(Rectangle())
-                        .onTapGesture { editingGoal = goal }
-                        .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                GoalStore.moveToTrash(goal)
-                            } label: {
-                                Label("Қоқысқа тастау", systemImage: "trash")
-                            }
-                        }
-                }
+                    HStack(spacing: 6) {
+                        GoalRowView(goal: goal)
 
-                Button {
-                    showingAdd = true
-                } label: {
-                    Label("Жаңа мақсат қосу", systemImage: "plus.circle.fill")
+                        if level == .daily {
+                            Menu {
+                                ForEach(EisenhowerQuadrant.allCases) { quadrant in
+                                    Button(quadrant.title(language)) {
+                                        goal.eisenhowerQuadrant = quadrant
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "square.grid.2x2")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .menuIndicator(.hidden)
+                            .fixedSize()
+                            .help(L10n.t(.addToMatrixHelp, language))
+                        }
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture { editingGoal = goal }
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            GoalStore.moveToTrash(goal)
+                        } label: {
+                            Label(L10n.t(.trashAction, language), systemImage: "trash")
+                        }
+                    }
+                }
+            }
+
+            if level == .daily {
+                Section {
+                    EisenhowerMatrixView(placedGoals: placedGoals, onEdit: { goal in editingGoal = goal })
                 }
             }
         }
@@ -97,10 +144,10 @@ struct GoalListView: View {
             }
         }
         .sheet(isPresented: $showingAdd) {
-            AddEditGoalSheet(level: level, periodStart: periodStart, parentID: nil, existingGoal: nil)
+            AddEditGoalSheet(level: level, periodStart: periodStart, existingGoal: nil)
         }
         .sheet(item: $editingGoal) { goal in
-            AddEditGoalSheet(level: level, periodStart: periodStart, parentID: goal.parentID, existingGoal: goal)
+            AddEditGoalSheet(level: level, periodStart: periodStart, existingGoal: goal)
         }
     }
 }

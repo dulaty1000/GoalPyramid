@@ -5,58 +5,41 @@ import SwiftData
 struct AddEditGoalSheet: View {
     let level: GoalLevel
     let periodStart: Date
-    let parentID: UUID?
     let existingGoal: GoalItem?
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    @Query private var allGoals: [GoalItem]
+    /// Терезе түбірінен келеді — тіл ауысқанда осы sheet дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
 
     @State private var title: String = ""
     @State private var notes: String = ""
     @State private var evaluation: EvaluationColor = .none
-    @State private var isCompleted: Bool = false
-    @State private var selectedParentID: UUID?
 
     private var isEditing: Bool { existingGoal != nil }
 
-    private var potentialParents: [GoalItem] {
-        guard let parentLevel = level.parentLevel else { return [] }
-        return allGoals.filter { $0.level == parentLevel && !$0.isDeleted }
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(isEditing ? "Мақсатты өңдеу" : "Жаңа \(level.title.lowercased()) мақсат")
+            Text(isEditing ? L10n.t(.editGoalTitle, language) : L10n.newGoalTitle(levelTitle: level.title(language), language))
                 .font(.title2.bold())
 
-            TextField("Атауы", text: $title)
+            TextField(L10n.t(.fieldTitleLabel, language), text: $title)
                 .textFieldStyle(.roundedBorder)
 
-            TextField("Ескертпе (міндетті емес)", text: $notes, axis: .vertical)
+            TextField(L10n.t(.fieldNotesOptional, language), text: $notes, axis: .vertical)
                 .textFieldStyle(.roundedBorder)
                 .lineLimit(2...4)
 
-            if let parentLevel = level.parentLevel, !potentialParents.isEmpty {
-                Picker("Байланысты \(parentLevel.title.lowercased()) мақсат", selection: $selectedParentID) {
-                    Text("Жоқ").tag(UUID?.none)
-                    ForEach(potentialParents) { parent in
-                        Text(parent.title).tag(Optional(parent.id))
-                    }
-                }
-            }
-
-            Toggle("Орындалды", isOn: $isCompleted)
-
             HStack {
-                Text("Бағасы:")
+                Text(L10n.t(.evaluationLabel, language))
                 EvaluationPicker(evaluation: $evaluation)
             }
 
             HStack {
                 if isEditing {
-                    Button("Қоқысқа тастау", role: .destructive) {
+                    Button(L10n.t(.trashAction, language), role: .destructive) {
                         if let goal = existingGoal {
                             GoalStore.moveToTrash(goal)
                         }
@@ -64,8 +47,8 @@ struct AddEditGoalSheet: View {
                     }
                 }
                 Spacer()
-                Button("Бас тарту") { dismiss() }
-                Button(isEditing ? "Сақтау" : "Қосу") { save() }
+                Button(L10n.t(.formCancel, language)) { dismiss() }.keyboardShortcut(.cancelAction)
+                Button(isEditing ? L10n.t(.saveButton, language) : L10n.t(.addButton, language)) { save() }
                     .keyboardShortcut(.defaultAction)
                     .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
             }
@@ -73,15 +56,10 @@ struct AddEditGoalSheet: View {
         .padding(24)
         .frame(width: 420)
         .onAppear {
-            if let goal = existingGoal {
-                title = goal.title
-                notes = goal.notes
-                evaluation = goal.evaluation
-                isCompleted = goal.isCompleted
-                selectedParentID = goal.parentID
-            } else {
-                selectedParentID = parentID
-            }
+            guard let goal = existingGoal else { return }
+            title = goal.title
+            notes = goal.notes
+            evaluation = goal.evaluation
         }
     }
 
@@ -93,24 +71,16 @@ struct AddEditGoalSheet: View {
             goal.title = trimmed
             goal.notes = notes
             goal.evaluation = evaluation
-            goal.parentID = selectedParentID
-            if isCompleted != goal.isCompleted {
-                GoalStore.toggleCompletion(goal)
-            }
         } else {
             let newGoal = GoalItem(
                 title: trimmed,
                 level: level,
                 periodStart: periodStart,
                 notes: notes,
-                parentID: selectedParentID,
                 sortOrder: GoalStore.count(level: level, periodStart: periodStart, in: context)
             )
             newGoal.evaluation = evaluation
             context.insert(newGoal)
-            if isCompleted {
-                GoalStore.markCompleted(newGoal, evaluation: evaluation == .none ? .green : evaluation)
-            }
         }
         dismiss()
     }

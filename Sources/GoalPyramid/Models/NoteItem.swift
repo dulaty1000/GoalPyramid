@@ -12,8 +12,16 @@ final class NoteItem {
     var updatedAt: Date = Date()
     var isDeleted: Bool = false
     var deletedAt: Date?
+    /// "Идеялар" тізімінде топтастыру үшін — міндетті емес кезең.
+    /// Ескі жазбаларда бұл өріс болмағандықтан әдепкі мәні `.other`.
+    var timeframeRaw: String = ProjectTimeframe.other.rawValue
 
-    init(title: String = "", content: String = "") {
+    var timeframe: ProjectTimeframe {
+        get { ProjectTimeframe(rawValue: timeframeRaw) ?? .other }
+        set { timeframeRaw = newValue.rawValue }
+    }
+
+    init(title: String = "", content: String = "", timeframe: ProjectTimeframe = .other) {
         self.id = UUID()
         self.title = title
         self.content = content
@@ -21,5 +29,6 @@ final class NoteItem {
         self.updatedAt = Date()
         self.isDeleted = false
         self.deletedAt = nil
+        self.timeframeRaw = timeframe.rawValue
     }
 }

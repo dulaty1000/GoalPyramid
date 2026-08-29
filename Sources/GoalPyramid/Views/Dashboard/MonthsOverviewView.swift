@@ -10,9 +10,13 @@ struct MonthsOverviewView: View {
     var onNavigateUp: (() -> Void)?
     var onNavigateDown: (() -> Void)?
 
+    /// Терезе түбірінен келеді — тіл ауысқанда осы View дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
+
     private var monthSymbols: [String] {
         let df = DateFormatter()
-        df.locale = Locale(identifier: "kk_KZ")
+        df.locale = language.locale
         return df.standaloneMonthSymbols.map { $0.capitalized }
     }
 
@@ -23,7 +27,7 @@ struct MonthsOverviewView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "calendar")
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Theme.accent)
                         .font(.title3)
                     Text(monthSymbols[month - 1])
                         .font(.title3.weight(.semibold))
@@ -35,7 +39,7 @@ struct MonthsOverviewView: View {
             .buttonStyle(.plain)
         }
         .listStyle(.inset)
-        .navigationTitle("\(String(year)) жылдың айлары")
+        .navigationTitle(L10n.yearMonthsTitle(year: year, language))
         .toolbar {
             ToolbarItemGroup(placement: .navigation) {
                 if let onNavigateUp {
@@ -44,7 +48,7 @@ struct MonthsOverviewView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                     }
-                    .help("Жылға қайту")
+                    .help(L10n.t(.navBackToYear, language))
                 }
                 if let onNavigateDown {
                     Button {
@@ -52,7 +56,7 @@ struct MonthsOverviewView: View {
                     } label: {
                         Image(systemName: "chevron.right")
                     }
-                    .help("Айға өту")
+                    .help(L10n.t(.navForwardToMonth, language))
                 }
             }
         }

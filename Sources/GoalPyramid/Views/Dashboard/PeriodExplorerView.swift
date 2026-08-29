@@ -10,6 +10,10 @@ import SwiftUI
 struct PeriodExplorerView: View {
     @Binding var stop: PeriodStop
 
+    /// Терезе түбірінен келеді — тіл ауысқанда осы View дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
+
     private var years: [Int] {
         let currentYear = PeriodHelper.year(of: Date())
         return Array(currentYear...(currentYear + 5))
@@ -31,6 +35,7 @@ struct PeriodExplorerView: View {
             GoalListView(
                 level: .fiveYear,
                 periodStart: PeriodHelper.yearStart(year),
+                onNavigateUp: { stop = .years },
                 onNavigateDown: { stop = .months(year) }
             )
 
@@ -98,7 +103,7 @@ struct PeriodExplorerView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "mountain.2.fill")
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Theme.accent)
                         .font(.title3)
                     Text(String(year))
                         .font(.title3.weight(.semibold))
@@ -110,6 +115,6 @@ struct PeriodExplorerView: View {
             .buttonStyle(.plain)
         }
         .listStyle(.inset)
-        .navigationTitle("5 Жыл")
+        .navigationTitle(L10n.t(.sidebarFiveYear, language))
     }
 }

@@ -9,34 +9,43 @@ struct MenuBarTodayView: View {
     @Query private var allGoals: [GoalItem]
 
     @State private var showingAdd = false
+    @AppStorage(AppSettingsKey.completionEffectsEnabled) private var effectsEnabled = false
+    @State private var bouncingGoalID: UUID?
+
+    /// Терезе түбірінен келеді — тіл ауысқанда осы виджет дереу қайта
+    /// салынады (толығырақ түсінік: `Localization.swift`).
+    @Environment(\.appLanguage) private var language
 
     private var todayStart: Date { PeriodHelper.periodStart(for: .daily) }
 
     private var todayGoals: [GoalItem] {
         allGoals
-            .filter { $0.level == .daily && $0.periodStart == todayStart && !$0.isDeleted }
+            .excludingTrashed()
+            .filter { $0.level == .daily && $0.periodStart == todayStart && $0.hasDueDate }
             .sorted { $0.sortOrder < $1.sortOrder }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Бүгінгі 3 тапсырма")
+            Text(L10n.t(.menuBarTitle, language))
                 .font(.headline)
 
             Divider()
 
             if todayGoals.isEmpty {
-                Text("Бүгінге тапсырма қосылмаған")
+                Text(L10n.t(.menuBarEmpty, language))
                     .foregroundStyle(.secondary)
                     .font(.callout)
             } else {
                 ForEach(todayGoals) { goal in
                     HStack(spacing: 8) {
                         Button {
-                            GoalStore.toggleCompletion(goal)
+                            toggleWithEffect(goal)
                         } label: {
                             Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
                                 .foregroundStyle(goal.isCompleted ? .green : .secondary)
+                                .scaleEffect(bouncingGoalID == goal.id ? 1.35 : 1.0)
+                                .animation(.spring(response: 0.22, dampingFraction: 0.35), value: bouncingGoalID)
                         }
                         .buttonStyle(.plain)
 
@@ -57,17 +66,17 @@ struct MenuBarTodayView: View {
             Divider()
 
             HStack {
-                Button("+ Тапсырма қосу") { showingAdd = true }
+                Button(L10n.t(.menuBarAddTask, language)) { showingAdd = true }
                     .buttonStyle(.plain)
                     .foregroundStyle(.blue)
                 Spacer()
-                Button("Толық терезе") {
+                Button(L10n.t(.menuBarFullWindow, language)) {
                     NSApp.activate(ignoringOtherApps: true)
                     openWindow(id: "main")
                 }
                 .buttonStyle(.plain)
 
-                Button("Шығу") {
+                Button(L10n.t(.menuBarQuit, language)) {
                     NSApp.terminate(nil)
                 }
                 .buttonStyle(.plain)
@@ -77,7 +86,18 @@ struct MenuBarTodayView: View {
         .padding(14)
         .frame(width: 280)
         .sheet(isPresented: $showingAdd) {
-            AddEditGoalSheet(level: .daily, periodStart: todayStart, parentID: nil, existingGoal: nil)
+            AddEditGoalSheet(level: .daily, periodStart: todayStart, existingGoal: nil)
+        }
+    }
+
+    private func toggleWithEffect(_ goal: GoalItem) {
+        let willComplete = !goal.isCompleted
+        GoalStore.toggleCompletion(goal)
+        guard willComplete, effectsEnabled else { return }
+        NSSound(named: "Tink")?.play()
+        bouncingGoalID = goal.id
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
+            if bouncingGoalID == goal.id { bouncingGoalID = nil }
         }
     }
 }

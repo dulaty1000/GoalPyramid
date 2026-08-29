@@ -11,25 +11,50 @@ enum GoalStore {
         return (try? context.fetchCount(descriptor)) ?? 0
     }
 
-    static func markCompleted(_ goal: GoalItem, evaluation: EvaluationColor) {
-        goal.isCompleted = true
-        goal.evaluation = evaluation
-        goal.completedAt = Date()
+    /// Тапсырманы "орындалды ↔ орындалмады" күйіне ауыстырады. Негізгі
+    /// интерфейсте (тізім жолдары, "Жаңа тапсырма" диалогтары) бұл енді
+    /// ТІКЕЛЕЙ `EvaluationPicker` арқылы басқарылады (`GoalItem.evaluation`
+    /// setter-ін қараңыз); бұл функция тек MenuBar виджетінің жинақы
+    /// жылдам-toggle батырмасы сияқты бөлек checkbox қолданатын
+    /// орындарда қажет.
+    static func toggleCompletion(_ goal: GoalItem) {
+        goal.evaluation = goal.isCompleted ? .none : .green
     }
 
-    static func toggleCompletion(_ goal: GoalItem) {
-        goal.isCompleted.toggle()
-        if goal.isCompleted {
-            goal.completedAt = Date()
-            if goal.evaluation == .none { goal.evaluation = .green }
-        } else {
-            goal.completedAt = nil
+    /// Ескі деректерде (мыс. бұрынғы backup-тан импортталған) `isCompleted`
+    /// пен `evaluation` арасында сәйкессіздік қалып қоюы мүмкін —
+    /// бұрын checkbox арқылы "Орындалды" деп белгіленген, бірақ бағасы
+    /// әлі "сұр" (`.none`) болып қалған тапсырмаларды "жасыл" бағаға
+    /// көшіреді. Жаңа модельде екеуі әрдайым бірге жүреді, сондықтан
+    /// бұл тек бір реттік сақтандыру қадамы.
+    static func reconcileLegacyCompletionState(in context: ModelContext) {
+        guard let items = try? context.fetch(FetchDescriptor<GoalItem>()) else { return }
+        var didChange = false
+        for item in items where item.isCompleted && item.evaluation == .none {
+            item.evaluation = .green
+            didChange = true
+        }
+        if didChange {
+            try? context.save()
         }
     }
 
+    /// Тапсырманы Қоқысқа тастайды. Егер бұл дағдыдан автоматты жасалған
+    /// тапсырма болса (`habitID != nil`), сол дағдының
+    /// `excludedDates`-іне осы күнді де қосады — осылай, осы `GoalItem`
+    /// жазбасы Қоқыстан кейін ТҮПКІЛІКТІ өшірілсе де, дағдының кестелеу
+    /// логикасы бұл нақты күнге ЕШҚАШАН қайта тапсырма жасамайды (тек
+    /// "Дағдылар" бетінен қолмен қайта белсендірусіз/жаңа циклсіз).
     static func moveToTrash(_ goal: GoalItem) {
         goal.isDeleted = true
         goal.deletedAt = Date()
+
+        if let habitID = goal.habitID, let context = goal.modelContext {
+            let descriptor = FetchDescriptor<HabitItem>(predicate: #Predicate<HabitItem> { $0.id == habitID })
+            if let habit = try? context.fetch(descriptor).first, !habit.excludedDates.contains(goal.periodStart) {
+                habit.excludedDates.append(goal.periodStart)
+            }
+        }
     }
 
     static func restore(_ goal: GoalItem) {

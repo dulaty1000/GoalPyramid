@@ -5,7 +5,8 @@ import Foundation
 enum PeriodHelper {
     static var calendar: Calendar {
         var cal = Calendar(identifier: .iso8601)
-        cal.firstWeekday = 2 // дүйсенбіден бастау
+        let raw = UserDefaults.standard.string(forKey: AppSettingsKey.weekStart) ?? WeekStartDay.monday.rawValue
+        cal.firstWeekday = (WeekStartDay(rawValue: raw) ?? .monday).calendarFirstWeekday
         cal.timeZone = .current
         return cal
     }
@@ -75,11 +76,13 @@ enum PeriodHelper {
     static func displayRange(for level: GoalLevel, periodStart: Date) -> String {
         let cal = calendar
         let df = DateFormatter()
-        df.locale = Locale(identifier: "kk_KZ")
+        // Ай/апта күндерінің атаулары ("Тамыз"/"Дүйсенбі" т.б.) да ағымдағы
+        // интерфейс тіліне сай көрінуі үшін.
+        df.locale = AppLanguage.current.locale
 
         switch level {
         case .daily:
-            df.dateFormat = "d MMMM, EEEE"
+            df.dateFormat = AppDateFormat.current.pattern
             return df.string(from: periodStart)
         case .weekly:
             guard let end = cal.date(byAdding: .day, value: 6, to: periodStart) else { return "" }

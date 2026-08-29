@@ -128,6 +128,9 @@ enum HabitStore {
                         hasDueDate: true,
                         habitID: habit.id
                     )
+                    // Нақты SwiftData қатынасы — `HabitItem.tasks`-тың
+                    // `.cascade` ережесі осыны қолданады.
+                    task.habit = habit
                     context.insert(task)
                 }
             }
@@ -160,6 +163,29 @@ enum HabitStore {
                 duplicate.deletedAt = Date()
                 didChange = true
             }
+        }
+        if didChange {
+            try? context.save()
+        }
+    }
+
+    /// Осы түзетуден БҰРЫН дағды түпкілікті өшірілгенде оның болашаққа
+    /// жазылған тапсырмалары бірге өшірілмей, "жетім" болып қалуы мүмкін
+    /// еді (иесі жоқ, бірақ әлі белсенді `GoalItem`). Енді
+    /// `HabitItem.tasks`-тың `.cascade` ережесі мұны алдын алады, бірақ
+    /// БҰРЫН қалып қойған жетімдерді бір рет тазалайды.
+    static func reconcileOrphanedHabitTasks(in context: ModelContext) {
+        guard let habitTasks = try? context.fetch(FetchDescriptor<GoalItem>(predicate: #Predicate<GoalItem> { $0.habitID != nil && !$0.isDeleted })) else { return }
+        guard let allHabits = try? context.fetch(FetchDescriptor<HabitItem>()) else { return }
+        let existingHabitIDs = Set(allHabits.map(\.id))
+
+        var didChange = false
+        let now = Date()
+        for task in habitTasks {
+            guard let habitID = task.habitID, !existingHabitIDs.contains(habitID) else { continue }
+            task.isDeleted = true
+            task.deletedAt = now
+            didChange = true
         }
         if didChange {
             try? context.save()

@@ -36,6 +36,11 @@ final class GoalItem {
     /// Аналитика бөлімінің БАРЛЫҚ есептеулерінен (heatmap, деңгей бойынша
     /// пайыз, т.б.) толығымен тыс қалдырылады.
     var habitID: UUID?
+    /// `habitID`-мен ҚАТАР тұрған, НАҚТЫ SwiftData қатынасы — тек
+    /// `HabitItem.tasks`-тың `.cascade` өшіру ережесі жұмыс істеуі үшін
+    /// керек (`HabitItem.swift`-ты қараңыз). Барлық сүзу/іздеу логикасы
+    /// бұрынғыша `habitID`-ді қолданады өзгеріссіз.
+    var habit: HabitItem?
 
     var level: GoalLevel {
         get { GoalLevel(rawValue: levelRaw) ?? .daily }

@@ -42,6 +42,7 @@ struct GoalPyramidApp: App {
         }
         GoalStore.reconcileLegacyCompletionState(in: container.mainContext)
         HabitStore.reconcileDuplicateHabitTasks(in: container.mainContext)
+        HabitStore.reconcileOrphanedHabitTasks(in: container.mainContext)
     }
 
     var body: some Scene {

@@ -35,6 +35,16 @@ final class HabitItem {
     /// емес, мүлдем түпкілікті өшіруден кейін де кестелеу логикасы бұл
     /// күнді елеусіз қалдырады.
     var excludedDates: [Date] = []
+    /// SwiftData ФРЕЙМВОРК ДЕҢГЕЙІНДЕГІ кепілдік: осы дағды `context.delete(_:)`
+    /// арқылы ТҮПКІЛІКТІ өшірілсе (мыс. Қоқыстан "Жою" немесе "Барлығын
+    /// өшіру"), SwiftData АВТОМАТТЫ түрде осы тізімдегі барлық `GoalItem`
+    /// жазбаларын да бірге өшіреді — қай код жолы арқылы өшірілсе де
+    /// (тіпті болашақта жазылатын, әлі жоқ жол арқылы да), "жетім"
+    /// тапсырма қалып қоюы енді МҮМКІН ЕМЕС. Күнделікті "Қоқысқа тастау"
+    /// (soft-delete, `isDeleted = true`) кезінде бұл ереже іске қосылмайды
+    /// — ол тек НАҚТЫ жою (`context.delete`) кезінде жұмыс істейді.
+    @Relationship(deleteRule: .cascade, inverse: \GoalItem.habit)
+    var tasks: [GoalItem] = []
 
     var frequency: HabitFrequency {
         get { HabitFrequency(rawValue: frequencyRaw) ?? .daily }

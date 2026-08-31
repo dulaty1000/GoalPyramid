@@ -35,8 +35,23 @@ struct TrashView: View {
     /// салынады (толығырақ түсінік: `Localization.swift`).
     @Environment(\.appLanguage) private var language
 
+    /// Дағдының өзі "Дағдылар" тобында бөлек жол болып көрсетілетіндіктен,
+    /// сол дағдыдан жасалған әрбір күндік тапсырма данасын "Мақсаттар"
+    /// тобында ҚАЙТА, жеке-жеке көрсетудің қажеті жоқ (мыс. 30 күндік
+    /// дағды — 30 бөлек жол болып шығып кетпеуі үшін). Дерекқордан
+    /// ЕШТЕҢЕ өшірілмейді — тек осы жерде, тек КӨРСЕТУ үшін сүзіледі,
+    /// сондықтан дағдыны қалпына келтіргенде (`HabitStore.restore`)
+    /// бұл даналар өзгеріссіз қалпына келе береді.
+    private var visibleTrashedGoals: [GoalItem] {
+        let trashedHabitIDs = Set(trashedHabits.map(\.id))
+        return trashedGoals.filter { goal in
+            guard let habitID = goal.habitID else { return true }
+            return !trashedHabitIDs.contains(habitID)
+        }
+    }
+
     private var isEmpty: Bool {
-        trashedGoals.isEmpty && trashedNotes.isEmpty && trashedProjects.isEmpty && trashedHabits.isEmpty
+        visibleTrashedGoals.isEmpty && trashedNotes.isEmpty && trashedProjects.isEmpty && trashedHabits.isEmpty
     }
 
     private func tasks(of project: ProjectItem) -> [GoalItem] {
@@ -79,9 +94,9 @@ struct TrashView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                if !trashedGoals.isEmpty {
+                if !visibleTrashedGoals.isEmpty {
                     Section(L10n.t(.goalsSection, language)) {
-                        ForEach(trashedGoals) { goal in
+                        ForEach(visibleTrashedGoals) { goal in
                             HStack(spacing: 12) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(goal.title)

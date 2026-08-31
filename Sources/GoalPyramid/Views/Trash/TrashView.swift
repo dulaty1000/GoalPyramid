@@ -22,7 +22,7 @@ struct TrashView: View {
         order: .reverse
     ) private var trashedProjects: [ProjectItem]
     @Query(
-        filter: #Predicate<HabitItem> { $0.isDeleted },
+        filter: #Predicate<HabitItem> { $0.isTrashed },
         sort: \HabitItem.deletedAt,
         order: .reverse
     ) private var trashedHabits: [HabitItem]

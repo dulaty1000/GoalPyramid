@@ -174,7 +174,7 @@ struct ExportedHabit: Codable {
         notes = model.notes
         createdAt = model.createdAt
         updatedAt = model.updatedAt
-        isDeleted = model.isDeleted
+        isDeleted = model.isTrashed
         deletedAt = model.deletedAt
         frequencyRaw = model.frequencyRaw
         selectedWeekdays = model.selectedWeekdays
@@ -212,7 +212,7 @@ struct ExportedHabit: Codable {
         item.id = id
         item.createdAt = createdAt
         item.updatedAt = updatedAt
-        item.isDeleted = isDeleted
+        item.isTrashed = isDeleted
         item.deletedAt = deletedAt
         item.isActive = isActive
         item.excludedDates = excludedDates

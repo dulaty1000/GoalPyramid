@@ -12,7 +12,7 @@ struct AnalyticsView: View {
     // Дәл осы екі @Query — жоғарыдағы `activeGoals`-тан МҮЛДЕМ бөлек:
     // тек "Дағдылар" графигі үшін ғана қолданылады, басқа ешбір
     // Аналитика есептеуіне (heatmap, кесте, т.б.) араласпайды.
-    @Query(filter: #Predicate<HabitItem> { !$0.isDeleted }) private var habitsForChart: [HabitItem]
+    @Query(filter: #Predicate<HabitItem> { !$0.isTrashed }) private var habitsForChart: [HabitItem]
     @Query(filter: #Predicate<GoalItem> { !$0.isDeleted && $0.habitID != nil }) private var habitGoalsForChart: [GoalItem]
 
     /// Терезе түбірінен келеді — тіл ауысқанда осы бет дереу қайта

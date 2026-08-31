@@ -10,7 +10,7 @@ enum HabitStore {
     /// ӨТКЕН күндерге тиесілі (тарихта қалған, бұрын орындалған/
     /// орындалмаған) даналар өзгеріссіз қалады.
     static func moveToTrash(_ habit: HabitItem) {
-        habit.isDeleted = true
+        habit.isTrashed = true
         habit.deletedAt = Date()
 
         guard let context = habit.modelContext else { return }
@@ -32,7 +32,7 @@ enum HabitStore {
     /// `moveToTrash`-тың кері жағы, `ProjectStore.restore`-мен бірдей
     /// үлгі.
     static func restore(_ habit: HabitItem, tasks: [GoalItem] = []) {
-        habit.isDeleted = false
+        habit.isTrashed = false
         habit.deletedAt = nil
         for task in tasks {
             GoalStore.restore(task)
@@ -76,7 +76,7 @@ enum HabitStore {
     /// пайдаланушыдан "жалғастырамыз ба?" деп сұрау керек тізім.
     static func habitsNeedingRenewalDecision(_ habits: [HabitItem]) -> [HabitItem] {
         let now = Date()
-        return habits.filter { !$0.isDeleted && $0.isActive && $0.cycleEndDate <= now }
+        return habits.filter { !$0.isTrashed && $0.isActive && $0.cycleEndDate <= now }
     }
 
     /// `[from, to)` аралығындағы әр күнге, дағдының жиілігіне сай

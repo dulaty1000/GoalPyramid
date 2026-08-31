@@ -15,7 +15,14 @@ final class HabitItem {
     var notes: String = ""
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
-    var isDeleted: Bool = false
+    /// АТАЛУЫ `isDeleted` ЕМЕС, әдейі: SwiftData/Core Data-да дәл осы
+    /// атаумен стек мінез-құлқы бар (осы модельде тексерілді — нақ
+    /// осы атаумен `context.save()`-тен кейін мән ЕШҚАШАН сақталмай
+    /// қалатыны нақты дәлелденді, ал `isTrashed` деп өзгерткенде дереу
+    /// дұрыс жұмыс істеді). Сол себепті бүкіл "Дағдылар" логикасы осы
+    /// атауды қолданады — `GoalItem`/`NoteItem`/`ProjectItem`-дегі
+    /// `isDeleted` бұған қатысы жоқ, солар өзгеріссіз қалады.
+    var isTrashed: Bool = false
     var deletedAt: Date?
     var frequencyRaw: String = HabitFrequency.daily.rawValue
     /// Тек `.specificDays` жиілігінде мағыналы — 0=Дүйсенбі...6=Жексенбі
@@ -41,7 +48,7 @@ final class HabitItem {
     /// жазбаларын да бірге өшіреді — қай код жолы арқылы өшірілсе де
     /// (тіпті болашақта жазылатын, әлі жоқ жол арқылы да), "жетім"
     /// тапсырма қалып қоюы енді МҮМКІН ЕМЕС. Күнделікті "Қоқысқа тастау"
-    /// (soft-delete, `isDeleted = true`) кезінде бұл ереже іске қосылмайды
+    /// (soft-delete, `isTrashed = true`) кезінде бұл ереже іске қосылмайды
     /// — ол тек НАҚТЫ жою (`context.delete`) кезінде жұмыс істейді.
     @Relationship(deleteRule: .cascade, inverse: \GoalItem.habit)
     var tasks: [GoalItem] = []
@@ -58,7 +65,7 @@ final class HabitItem {
         self.notes = notes
         self.createdAt = now
         self.updatedAt = now
-        self.isDeleted = false
+        self.isTrashed = false
         self.deletedAt = nil
         self.frequencyRaw = frequency.rawValue
         self.selectedWeekdays = selectedWeekdays

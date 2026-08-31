@@ -7,7 +7,7 @@ import SwiftData
 struct HabitsView: View {
     @Environment(\.modelContext) private var context
     @Query(
-        filter: #Predicate<HabitItem> { !$0.isDeleted },
+        filter: #Predicate<HabitItem> { !$0.isTrashed },
         sort: \HabitItem.createdAt,
         order: .reverse
     ) private var habits: [HabitItem]
